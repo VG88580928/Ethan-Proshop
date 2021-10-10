@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500&display=swap');
+
+body,
+button,
+input,
+select,
+textarea,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Noto Sans TC, 微軟正黑體, sans-serif;
+}
+
+main {
+  min-height: 80vh;
+}
+
+h3 {
+  padding: 1rem 0;
+}
+
+/* category */
+.category .card {
+  padding: 16px;
+  margin: 10px 0;
+  text-align: center;
+  cursor: pointer;
+}
+
+.category .card:hover {
+  border: 0.5px solid #696867;
+  box-shadow: 0 1px 5px #757473;
+}
+
+.category .card:active, .category .card:focus {
+  border: 0.5px solid #696867;
+  box-shadow: 0 2px 10px #757473;
+}
+
+.category > div {
+  position: sticky; /* 意思就是原本是position:relative，當距離螢幕上緣20px後轉為fixed */
+  top: 20px;
+}
+
+@media (min-width: 520px) and (max-width: 991px) {
+  .category > div {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  .category .card {
+    margin: 0 5px;
+    width: 33%;
+  }
+}
+
+@media (max-width: 520px) {
+  .category > div {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .category .card {
+    width: 45%;
+    margin: 5px 5px;
+  }
+}
+
+/* Rating */
+.rating i {
+  color: #ee4d2d;
+  margin: 0.1rem;
+}
