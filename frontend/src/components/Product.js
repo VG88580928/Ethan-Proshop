@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
-// Link & NavLink選擇後者，因為他附的API功能更多一點
+import { NavLink } from 'react-router-dom'; // Link & NavLink選擇後者，因為他附的API功能更多一點
 import Rating from './Rating';
 
 const Product = ({ product }) => {

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 const Rating = ({ value, text }) => {
   return (
     <div className='rating'>
+      {/* 製作五顆星星 */}
       {[1, 2, 3, 4, 5].map((index) => (
         <i
           key={index}
@@ -24,7 +25,6 @@ const Rating = ({ value, text }) => {
 // 星星顏色也可以在這個component上設置defaultProps來帶入color
 
 Rating.propTypes = {
-  value: PropTypes.number.isRequired,
   text: PropTypes.string.isRequired,
 };
 

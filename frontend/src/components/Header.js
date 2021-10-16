@@ -4,7 +4,7 @@ import { Container, Navbar, Nav } from 'react-bootstrap';
 
 const Header = () => {
   return (
-    <header>
+    <header className='fixed-top'>
       <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <Navbar.Brand as={NavLink} to='/'>

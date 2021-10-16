@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import products from '../products';
+import axios from 'axios';
 
 const ProductScreen = ({ match }) => {
   // 接收props集合(match、location、history、staticContext等),由Route提供的屬性
-  const product = products.find((product) => product._id === match.params.id);
+  const [product, setProduct] = useState({});
+
+  useEffect(() => {
+    async function fetchProduct() {
+      const res = await axios.get(`/api/products/${match.params.id}`);
+      setProduct(res.data);
+    }
+    fetchProduct();
+  }, [match]);
+
   return (
     <>
       <NavLink className='btn btn-outline-secondary my-3' to='/' exact>
@@ -27,7 +36,7 @@ const ProductScreen = ({ match }) => {
               <Rating
                 value={product.rating}
                 text={` ${product.numReviews} 人評價`}
-              ></Rating>
+              />
             </ListGroup.Item>
             <ListGroup.Item> NT$ {product.price}</ListGroup.Item>
             <ListGroup.Item>

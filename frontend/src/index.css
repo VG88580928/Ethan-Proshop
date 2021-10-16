@@ -21,6 +21,13 @@ main {
 h3 {
   padding: 1rem 0;
 }
+/* Header */
+header.fixed-top {
+  position: fixed;
+  right: 0;
+  left: 0;
+  z-index: 10;
+}
 
 /* category */
 .category .card {
@@ -42,7 +49,7 @@ h3 {
 
 .category > div {
   position: sticky; /* 意思就是原本是position:relative，當距離螢幕上緣20px後轉為fixed */
-  top: 20px;
+  top: 70px;
 }
 
 @media (min-width: 520px) and (max-width: 991px) {
