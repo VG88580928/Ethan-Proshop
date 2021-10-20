@@ -4,6 +4,8 @@ import Product from '../models/productModel.js';
 
 const router = express.Router(); //creates a new router object
 
+// Router-level middleware
+
 // @描述: 獲取所有商品
 // @route: GET /api/products
 // @使用權: Public

@@ -1,80 +1,158 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  InputGroup,
+  FormControl,
+} from 'react-bootstrap';
 import Rating from '../components/Rating';
-import axios from 'axios';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { requestProductDetails } from '../actions/productActions';
 
-const ProductScreen = ({ match }) => {
+const ProductScreen = ({ history, match }) => {
   // 接收props集合(match、location、history、staticContext等),由Route提供的屬性
-  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(0);
+
+  const dispatch = useDispatch();
+
+  const productDetails = useSelector((state) => state.requestProductDetails);
+  const { product, error } = productDetails;
 
   useEffect(() => {
-    async function fetchProduct() {
-      const res = await axios.get(`/api/products/${match.params.id}`);
-      setProduct(res.data);
+    dispatch(requestProductDetails(match.params.id));
+  }, [dispatch, match]);
+
+  const inputNumberHandler = (e) => {
+    const inputNumber = parseInt(e.target.value); // 字串轉成數字，移除小數點，非數字回傳 NaN (有小數點的話用 parseFloat())
+    if (Number.isNaN(inputNumber) || inputNumber < 0) {
+      setQuantity(0); // 如果輸入的不是數字 or 輸入負值讓 input value 保持 0
+    } else if (inputNumber > product.countInStock) {
+      setQuantity(product.countInStock); // 輸入數字最大值為商品總數量
+    } else {
+      setQuantity(inputNumber);
     }
-    fetchProduct();
-  }, [match]);
+  };
+
+  const minusButtonHandler = () => {
+    if (quantity > 0 && quantity <= product.countInStock) {
+      setQuantity((prev) => setQuantity(prev - 1));
+    }
+  };
+
+  const plusButtonHandler = () => {
+    if (quantity < product.countInStock) {
+      setQuantity((prev) => setQuantity(prev + 1));
+    }
+  };
+
+  // console.log(history);
 
   return (
-    <>
+    <div className='product-screen pt-5'>
+      {/* 這邊一定要加exact，否則返回鍵會一直處在active的狀態 */}
       <NavLink className='btn btn-outline-secondary my-3' to='/' exact>
         返回
       </NavLink>
-      {/* 這邊一定要加exact，否則返回鍵會一直處在active的狀態 */}
-      <Row>
-        <Col md={6}>
-          <Image src={product.image} alt={product.name} fluid />
-          {/* fluid = max-with:100% height:auto 讓圖片能鎖在Col這個container內 */}
-        </Col>
-        <Col md={3}>
-          <ListGroup>
-            <ListGroup.Item>
-              <h3>{product.name}</h3>
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <Rating
-                value={product.rating}
-                text={` ${product.numReviews} 人評價`}
-              />
-            </ListGroup.Item>
-            <ListGroup.Item> NT$ {product.price}</ListGroup.Item>
-            <ListGroup.Item>
-              <div>【商品敘述】:</div> {product.description}
-            </ListGroup.Item>
-          </ListGroup>
-        </Col>
-        <Col md={3}>
-          <Card>
+      {/* 如果沒有加 && !error，當有 error 出現的情況，因為第一條件句還是符合會回傳 Loader 而導致錯誤訊息出不來  P.S. !==(優先性10) > &&(優先性6) */}
+      {product._id !== match.params.id && !error ? (
+        <Loader />
+      ) : error ? (
+        <Message>{error}</Message>
+      ) : (
+        <Row>
+          <Col className='product-screen-section' md={6}>
+            {/* fluid = max-with:100% height:auto 讓圖片能鎖在Col這個container內 */}
+            <Image src={product.image} alt={product.name} fluid />
+          </Col>
+          <Col className='product-screen-section' md={3}>
             <ListGroup>
               <ListGroup.Item>
-                <Row>
-                  <Col>售價:</Col>
-                  <Col>
-                    <strong>NT${product.price}</strong>
-                  </Col>
-                </Row>
+                <h3>{product.name}</h3>
               </ListGroup.Item>
               <ListGroup.Item>
-                <Row>
-                  <Col>狀態</Col>
-                  <Col>{product.countInStock ? '供貨中' : '已售完'}</Col>
-                </Row>
+                <Rating
+                  value={product.rating}
+                  text={` ${product.numReviews} 人評價`}
+                />
               </ListGroup.Item>
+              <ListGroup.Item> NT$ {product.price}</ListGroup.Item>
               <ListGroup.Item>
-                <Button
-                  disabled={product.countInStock === 0}
-                  className='w-100 fs-6'
-                >
-                  {/* 售完商品無法加入購物車 */}
-                  加入購物車
-                </Button>
+                <div>【商品敘述】:</div> {product.description}
               </ListGroup.Item>
             </ListGroup>
-          </Card>
-        </Col>
-      </Row>
-    </>
+          </Col>
+          <Col className='product-screen-section' md={3}>
+            <Card>
+              <ListGroup>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>售價:</Col>
+                    <Col>
+                      <strong>NT${product.price}</strong>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>狀態</Col>
+                    <Col>{product.countInStock ? '供貨中' : '已售完'}</Col>
+                  </Row>
+                </ListGroup.Item>
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>數量:</Col>
+                      <Col>還剩{product.countInStock}件</Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
+                <ListGroup.Item>
+                  <InputGroup>
+                    <Button
+                      variant='outline-secondary'
+                      onClick={minusButtonHandler}
+                    >
+                      <i className='fas fa-minus'></i>
+                    </Button>
+                    <FormControl
+                      aria-label='Example text with two button addons'
+                      value={
+                        quantity <= product.countInStock
+                          ? quantity
+                          : product.countInStock
+                      }
+                      onChange={inputNumberHandler}
+                    />
+                    <Button
+                      variant='outline-secondary'
+                      onClick={plusButtonHandler}
+                    >
+                      <i className='fas fa-plus'></i>
+                    </Button>
+                  </InputGroup>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  {/* 售完商品無法加入購物車 */}
+                  <Button
+                    disabled={product.countInStock === 0}
+                    className='w-100 fs-6'
+                  >
+                    加入購物車
+                  </Button>
+                </ListGroup.Item>
+              </ListGroup>
+            </Card>
+          </Col>
+        </Row>
+      )}
+    </div>
   );
 };
 

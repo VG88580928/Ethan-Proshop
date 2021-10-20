@@ -13,16 +13,18 @@ connectDB();
 
 const app = express();
 
+// 當 server 收到 req,這個 req 會經過下面一連串的 middleware-chain,找到他該去的地方
+
+// Application-level middleware
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
 app.use('/api/products', productRoutes);
 
-// Error-handling middleware (當 req 的 url 找不到時觸發)
-app.use(notFound);
-
 // Error-handling middleware
+app.use(notFound); // 當 req 的 url 找不到時觸發
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
