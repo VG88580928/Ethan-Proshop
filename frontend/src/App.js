@@ -16,7 +16,8 @@ const App = () => {
           {/* 由於Route path='/' 表示/後面亂打默認都會到HomeScreen 所以用exact避免這個默認行為 */}
           <Route path='/' component={HomeScreen} exact />
           <Route path='/product/:id' component={ProductScreen} />
-          <Route path='/cart' component={CartScreen} />
+          {/* id 後的 ? 表示 id 是選擇性的(可有可無)，這樣我們從右上角點購物車時才進的到購物車畫面 */}
+          <Route path='/cart/:id?' component={CartScreen} />
         </Container>
       </main>
       <Footer />

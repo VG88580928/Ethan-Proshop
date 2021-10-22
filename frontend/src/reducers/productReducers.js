@@ -12,9 +12,9 @@ export const requestProductsReducer = (state = { products: [] }, action) => {
     // case REQUEST_PRODUCTS_PENDING:
     //   return { ...state, isPending: true };
     case REQUEST_PRODUCTS_SUCCESS:
-      return { ...state, products: action.payload };
+      return { products: action.payload };
     case REQUEST_PRODUCTS_FAIL:
-      return { ...state, error: action.payload };
+      return { error: action.payload };
     default:
       return state;
   }
@@ -26,7 +26,7 @@ export const requestProductDetailsReducer = (
 ) => {
   switch (action.type) {
     case REQUEST_PRODUCT_DETAILS_SUCCESS:
-      return { ...state, product: action.payload };
+      return { product: action.payload };
     case REQUEST_PRODUCT_DETAILS_FAIL:
       return { ...state, error: action.payload };
     default:

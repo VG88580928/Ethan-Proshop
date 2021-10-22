@@ -52,7 +52,10 @@ const ProductScreen = ({ history, match }) => {
     }
   };
 
-  // console.log(history);
+  const addToCartHandler = () => {
+    quantity > 0 && history.push(`/cart/${match.params.id}qty=${quantity}`);
+    // history.push() A > B 頁面後，上一頁會回到 A,history.replace() A > B 頁面後，上一頁回到 A 的上一頁
+  };
 
   return (
     <div className='product-screen pt-5'>
@@ -72,7 +75,8 @@ const ProductScreen = ({ history, match }) => {
             <Image src={product.image} alt={product.name} fluid />
           </Col>
           <Col className='product-screen-section' md={3}>
-            <ListGroup>
+            {/* variant='flush' 移除外邊框 */}
+            <ListGroup variant='flush'>
               <ListGroup.Item>
                 <h3>{product.name}</h3>
               </ListGroup.Item>
@@ -143,6 +147,7 @@ const ProductScreen = ({ history, match }) => {
                   <Button
                     disabled={product.countInStock === 0}
                     className='w-100 fs-6'
+                    onClick={addToCartHandler}
                   >
                     加入購物車
                   </Button>
