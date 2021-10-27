@@ -14,7 +14,8 @@ import {
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { requestProductDetails } from '../actions/productActions';
+import { requestProductDetails } from '../redux/actions/productActions';
+import { addToCart } from '../redux/slices/apiCalls';
 
 const ProductScreen = ({ history, match }) => {
   // 接收props集合(match、location、history、staticContext等),由Route提供的屬性
@@ -30,9 +31,9 @@ const ProductScreen = ({ history, match }) => {
   }, [dispatch, match]);
 
   const inputNumberHandler = (e) => {
-    const inputNumber = parseInt(e.target.value); // 字串轉成數字，移除小數點，非數字回傳 NaN (有小數點的話用 parseFloat())
+    const inputNumber = parseInt(e.target.value); // 字串轉成數字，移除小數點，非數字回傳 NaN (需要有小數點的話用 parseFloat())
     if (Number.isNaN(inputNumber) || inputNumber < 0) {
-      setQuantity(0); // 如果輸入的不是數字 or 輸入負值讓 input value 保持 0
+      setQuantity(''); // 如果輸入的不是數字 or 輸入負值讓 input value 保持 0
     } else if (inputNumber > product.countInStock) {
       setQuantity(product.countInStock); // 輸入數字最大值為商品總數量
     } else {
@@ -52,9 +53,14 @@ const ProductScreen = ({ history, match }) => {
     }
   };
 
-  const addToCartHandler = () => {
-    quantity > 0 && history.push(`/cart/${match.params.id}qty=${quantity}`);
-    // history.push() A > B 頁面後，上一頁會回到 A,history.replace() A > B 頁面後，上一頁回到 A 的上一頁
+  // history.push(B) A > B 頁面後，上一頁會回到 A,history.replace(B) A > B 頁面後，上一頁回到 A 的上一頁
+  // const addToCartHandler = () => {
+  //   quantity > 0 && history.push(`/cart/${match.params.id}?qty=${quantity}`);
+  // };
+
+  const addToCartHandler = async () => {
+    await dispatch(addToCart(product._id, quantity));
+    history.push('/cart');
   };
 
   return (
@@ -67,11 +73,11 @@ const ProductScreen = ({ history, match }) => {
       {product._id !== match.params.id && !error ? (
         <Loader />
       ) : error ? (
-        <Message>{error}</Message>
+        <Message variant='danger'>{error}</Message>
       ) : (
         <Row>
           <Col className='product-screen-section' md={6}>
-            {/* fluid = max-with:100% height:auto 讓圖片能鎖在Col這個container內 */}
+            {/* fluid = max-width:100% height:auto 讓圖片能鎖在Col這個container內 */}
             <Image src={product.image} alt={product.name} fluid />
           </Col>
           <Col className='product-screen-section' md={3}>
@@ -145,7 +151,7 @@ const ProductScreen = ({ history, match }) => {
                 <ListGroup.Item>
                   {/* 售完商品無法加入購物車 */}
                   <Button
-                    disabled={product.countInStock === 0}
+                    disabled={product.countInStock === 0 || !quantity}
                     className='w-100 fs-6'
                     onClick={addToCartHandler}
                   >

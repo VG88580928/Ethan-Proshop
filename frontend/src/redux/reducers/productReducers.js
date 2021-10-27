@@ -14,7 +14,7 @@ export const requestProductsReducer = (state = { products: [] }, action) => {
     case REQUEST_PRODUCTS_SUCCESS:
       return { products: action.payload };
     case REQUEST_PRODUCTS_FAIL:
-      return { error: action.payload };
+      return { ...state, error: action.payload };
     default:
       return state;
   }

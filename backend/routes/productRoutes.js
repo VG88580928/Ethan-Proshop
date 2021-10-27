@@ -12,7 +12,7 @@ const router = express.Router(); //creates a new router object
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    const products = await Product.find({});
+    const products = await Product.find({}); // 找到所有商品
 
     res.json(products); // 轉為 json 格式作為 response 送出
   })

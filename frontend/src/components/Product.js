@@ -19,10 +19,7 @@ const Product = ({ product }) => {
         </NavLink>
         {/* as=... 把該元素標籤變成...*/}
         <Card.Text as='div'>
-          <Rating
-            value={product.rating}
-            text={`${product.numReviews} reviews`}
-          />
+          <Rating value={product.rating} text={` ${product.numReviews} 評價`} />
         </Card.Text>
         <Card.Text as='h4'>{`NT$ ${product.price}`}</Card.Text>
       </Card.Body>
