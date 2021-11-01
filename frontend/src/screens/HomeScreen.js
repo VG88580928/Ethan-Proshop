@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'; // 優化過去 connect 的寫法
 import { Col, Row, Card } from 'react-bootstrap';
 import Product from '../components/Product';
@@ -8,8 +8,13 @@ import { requestProducts } from '../redux/actions/productActions';
 
 const HomeScreen = () => {
   const [value, setValue] = useState('所有商品');
+
+  const divRef = useRef();
+
   const dispatch = useDispatch();
+
   const productList = useSelector((state) => state.requestProducts);
+
   const { products, error } = productList;
 
   useEffect(() => {
@@ -25,7 +30,7 @@ const HomeScreen = () => {
   };
 
   const active = (e) => {
-    const divs = document.querySelectorAll('.category .card');
+    const divs = divRef.current.querySelectorAll('.card'); // 不要寫成 document.querySelectorAll('.category .card')，你抓了 document 會抓到其他 components，可能導致非預期的 bugs(參考:https://stackoverflow.com/questions/57556673/react-ref-and-query-selector-all)
     divs.forEach((div) => div.classList.remove('active'));
     if (e.target.tagName === 'DIV' && e.target.className === 'card') {
       e.target.classList.add('active');
@@ -44,6 +49,7 @@ const HomeScreen = () => {
         <>
           <Col className='category' as='section' lg={2}>
             <div
+              ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
               onClick={(e) => {
                 // 再點擊事件中同時執行多個函式
                 changeValue(e);

@@ -33,7 +33,7 @@ const store = configureStore({
 
 export default store;
 
-// ----- 原本 Redux 的版本 ------
+// ----- 做到一半時原本 Redux 的版本 ------
 
 // import { combineReducers } from 'redux';
 // import thunk from 'redux-thunk';
