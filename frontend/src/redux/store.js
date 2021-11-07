@@ -5,6 +5,13 @@ import {
 } from './reducers/productReducers';
 // import { cartReducer } from './reducers/cartReducers';
 import cartReducer from './slices/cartSlice';
+import {
+  userLoginReducer,
+  userRegisterReducer,
+  userDetailsReducer,
+  userUpdateProfileReducer,
+} from './slices/userSlices';
+import { orderCreateReducer } from './slices/orderSlices';
 
 const cartProductsFromLocalStorage = localStorage.getItem('cartProducts')
   ? JSON.parse(localStorage.getItem('cartProducts'))
@@ -14,11 +21,26 @@ const cartQuantityFromLocalStorage = localStorage.getItem('cartProducts')
   ? JSON.parse(localStorage.getItem('cartQuantity'))
   : 0;
 
+const userInfoFromLocalStorage = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo'))
+  : null;
+
+const shippingAddressFromLocalStorage = localStorage.getItem('shippingAddress')
+  ? JSON.parse(localStorage.getItem('shippingAddress'))
+  : {};
+
+const paymentMethodFromLocalStorage = localStorage.getItem('paymentMethod')
+  ? JSON.parse(localStorage.getItem('paymentMethod'))
+  : '';
+
 const initialState = {
   cart: {
     products: cartProductsFromLocalStorage,
     quantity: cartQuantityFromLocalStorage,
+    shippingAddress: shippingAddressFromLocalStorage,
+    paymentMethod: paymentMethodFromLocalStorage,
   },
+  userLogin: { userInfo: userInfoFromLocalStorage },
 };
 
 // 取代 createStore，已經內建好 thunk,redux-devtools-extension等 middleware 了，(applyMiddleware(),combineReducers() 等等都不需要了)
@@ -27,6 +49,11 @@ const store = configureStore({
     requestProducts: requestProductsReducer,
     requestProductDetails: requestProductDetailsReducer,
     cart: cartReducer,
+    userLogin: userLoginReducer,
+    userRegister: userRegisterReducer,
+    userDetails: userDetailsReducer,
+    userUpdateProfile: userUpdateProfileReducer,
+    orderCreate: orderCreateReducer,
   },
   preloadedState: initialState, // 這裡放之前的 initialState
 });

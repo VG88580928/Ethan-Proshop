@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 // schema 會自動生成 unique id
 const orderSchema = mongoose.Schema(
   {
-    // 讓 Order schema 連結 User schema，引用了 User schema 的 id
+    // 讓 Order schema 連結 User schema，引用了 User schema 的 id，所以當 user 登入的時候就可以取得 order
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -17,7 +17,7 @@ const orderSchema = mongoose.Schema(
         quantity: { type: Number, required: true },
         image: { type: String, required: true },
         price: { type: Number, required: true },
-        product: {
+        _id: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'Product',

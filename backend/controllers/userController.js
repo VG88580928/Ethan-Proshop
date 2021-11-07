@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     res.status(400); // HTTP 400 Bad Request
-    throw new Error('User already exists');
+    throw new Error('帳號已被使用過囉');
   }
 
   const user = await User.create({ name, email, password }); // create 前自動執行 pre('save')加密密碼，因為 create 是 save 的語法糖
@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route: GET /api/users/profile
 // @使用權: Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const user = req.user; // 在 protect middleware 裡建立好的 req.user
 
   if (user) {
     res.json({
@@ -74,4 +74,30 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, getUserProfile };
+// @描述: Update user profile
+// @route: PUT /api/users/profile
+// @使用權: Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.name || user.name; // 如果用戶沒改名字就保持原本
+    user.email = req.body.email || user.email;
+    user.password = req.body.password || user.password;
+
+    const updatedUser = await user.save(); // update a document with Mongoose.(save 會自動觸發執行 userSchema.pre 函式加密密碼)
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+export { authUser, registerUser, getUserProfile, updateUserProfile };

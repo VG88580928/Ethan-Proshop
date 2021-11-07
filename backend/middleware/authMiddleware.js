@@ -16,7 +16,7 @@ const protect = asyncHandler(async (req, res, next) => {
 
       req.user = await User.findById(decoded.id).select('-password'); // 這邊可以不用拿密碼
 
-      next(); // 執行下個 middleware(userController 裡的 getUserProfile)
+      next(); // 執行下個 middleware
     } catch (error) {
       console.error(error);
       res.status(401);

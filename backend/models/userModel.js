@@ -35,7 +35,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 //預先把純文字的密碼 encrypt (因為 create 是 save的語法糖，所以註冊 create 的時候這裡會自動執行)
-userSchema.pre('save', async function () {
+userSchema.pre('save', async function (next) {
   // 因為在更改用戶資訊時不會更改到密碼，所以要跳過該步驟，不然又生成一個新的 hash password 用戶就不能登入啦!
   if (!this.isModified('password')) {
     next();

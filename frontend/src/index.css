@@ -14,8 +14,13 @@ h6 {
   font-family: Noto Sans TC, 微軟正黑體, sans-serif;
 }
 
+/* 讓背景不要太白，很刺眼 */
+body {
+  background-color: #f5f5f5;
+}
+
 main {
-  min-height: 80vh;
+  min-height: 88vh;
 }
 
 h1 {
@@ -30,6 +35,14 @@ h2 {
 
 h3 {
   padding: 1rem 0;
+}
+
+a {
+  color: #5e6974;
+}
+
+a:hover {
+  color: #18191a;
 }
 /* Header */
 header.fixed-top {
@@ -54,7 +67,7 @@ header .navbar-nav .cart-link {
 }
 
 header .cart-link:hover {
-  background-color: #194dad;
+  background-color: #57adcf;
 }
 
 header .cart-link > span {
@@ -75,6 +88,21 @@ header .cart-badge {
   text-align: center;
   margin-left: 5px;
   font-size: 1rem;
+}
+
+header .dropdown-menu .dropdown-item,
+header .navbar .nav-link {
+  font-size: 1rem;
+}
+
+/* Footer */
+footer {
+  display: flex;
+  background-color: #3e3f3a;
+  color: #fff;
+  height: 12vh;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Category */
@@ -185,4 +213,48 @@ header .cart-badge {
 
 .cart-screen .form-control {
   padding: 0;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  /* Gutters 是介於欄位之間的間隙，這裡為了讓刪除紐不要跑版 */
+  .cart-screen .row {
+    --bs-gutter-x: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .cart-screen .right-part {
+    position: fixed;
+    right: 5%;
+    width: 25%;
+    padding: 0;
+    /* top 50% + translateY(-50%) 垂直置中 */
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    background-color: #fff;
+    font-weight: 600;
+  }
+}
+
+/* CheckoutSteps */
+
+.checkoutSteps .nav-item {
+  position: relative;
+}
+
+.checkoutSteps .nav-item::before {
+  content: attr(data-number); /* 接收 data-*attribute */
+  position: absolute;
+  bottom: 90%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 22px;
+  height: 22px;
+  background-color: rgb(138, 135, 133);
+  border-radius: 50%;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
 }

@@ -60,7 +60,7 @@ const ProductScreen = ({ history, match }) => {
 
   const addToCartHandler = async () => {
     await dispatch(addToCart(product._id, quantity));
-    history.push('/cart');
+    history.push('/cart'); // 小知識: 'cart' 和 '/cart' 兩種寫法差別在前面會直接疊上去，例如本來在 /product => /product/cart(這是因為 /product/:id 後面有一個 :id 會變成 cart)，後者是本來在 /product => /cart
   };
 
   return (
@@ -92,7 +92,7 @@ const ProductScreen = ({ history, match }) => {
                   text={` ${product.numReviews} 人評價`}
                 />
               </ListGroup.Item>
-              <ListGroup.Item> NT$ {product.price}</ListGroup.Item>
+              <ListGroup.Item> ${product.price}</ListGroup.Item>
               <ListGroup.Item>
                 <div>【商品敘述】:</div> {product.description}
               </ListGroup.Item>
@@ -105,7 +105,7 @@ const ProductScreen = ({ history, match }) => {
                   <Row>
                     <Col>售價:</Col>
                     <Col>
-                      <strong>NT${product.price}</strong>
+                      <strong>${product.price}</strong>
                     </Col>
                   </Row>
                 </ListGroup.Item>

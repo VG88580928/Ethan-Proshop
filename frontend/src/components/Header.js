@@ -1,10 +1,22 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { logout, userLogout } from '../redux/slices/userSlices';
 
 const Header = () => {
+  const dispatch = useDispatch();
+
   const qty = useSelector((state) => state.cart.quantity);
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const logoutHandler = () => {
+    localStorage.removeItem('userInfo');
+    dispatch(logout());
+    dispatch(userLogout()); // userRegister state 也要記得清掉
+    document.location.href = '/login';
+  };
 
   return (
     <header className='fixed-top'>
@@ -23,10 +35,25 @@ const Header = () => {
                   購物車<span className='cart-badge'>{qty}</span>
                 </span>
               </Nav.Link>
-              <Nav.Link as={NavLink} to='/login'>
-                {/* 中間空位不用條CSS，直接空白鍵就行了 */}
-                <i className='fas fa-user fs-6'> 登入</i>
-              </Nav.Link>
+              {userInfo ? (
+                <NavDropdown
+                  title={userInfo.name}
+                  className='ms-3'
+                  id='username'
+                >
+                  <NavDropdown.Item as={NavLink} to='/profile'>
+                    個人資料
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    登出
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Nav.Link as={NavLink} to='/login' className='ms-3'>
+                  {/* 中間空位不用條CSS，直接空白鍵就行了 */}
+                  <i className='fas fa-user fs-6'> 登入</i>
+                </Nav.Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>

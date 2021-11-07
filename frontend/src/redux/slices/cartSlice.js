@@ -6,6 +6,7 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     products: [],
+    shippingAddress: {},
     quantity: 0,
   },
   reducers: {
@@ -30,10 +31,31 @@ export const cartSlice = createSlice({
       localStorage.setItem('cartProducts', JSON.stringify(state.products)); // 記得刪完 state 裡的 product後，也要更新 localStorage
       localStorage.setItem('cartQuantity', JSON.stringify(state.quantity));
     },
+    saveShippingAddress: (state, action) => {
+      state.shippingAddress = action.payload;
+
+      localStorage.setItem(
+        'shippingAddress',
+        JSON.stringify(state.shippingAddress)
+      );
+    },
+    savePaymentMethod: (state, action) => {
+      state.paymentMethod = action.payload;
+
+      localStorage.setItem(
+        'paymentMethod',
+        JSON.stringify(state.paymentMethod)
+      );
+    },
   },
 });
 
 // each case under reducers becomes an action creater
 // 自動生成 action types (例如 addProduct 這個 action creater 會自動生成 'cart'(cartSlice.name) + '/' + 'addProduct'(addProduct.name) = 'cart/addProduct' 這個 action type)
-export const { addProduct, removeProduct } = cartSlice.actions;
+export const {
+  addProduct,
+  removeProduct,
+  saveShippingAddress,
+  savePaymentMethod,
+} = cartSlice.actions;
 export default cartSlice.reducer;
