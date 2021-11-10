@@ -15,7 +15,7 @@ export const userLoginSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    logout: (state) => (state = {}),
+    logout: (state) => (state = {}), // 清空 state (若 initialState 有其他初始值也會一併清空)
   },
 });
 

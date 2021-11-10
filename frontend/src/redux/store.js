@@ -11,7 +11,12 @@ import {
   userDetailsReducer,
   userUpdateProfileReducer,
 } from './slices/userSlices';
-import { orderCreateReducer } from './slices/orderSlices';
+import {
+  orderCreateReducer,
+  orderDetailsReducer,
+  orderPayReducer,
+  myOrderListReducer,
+} from './slices/orderSlices';
 
 const cartProductsFromLocalStorage = localStorage.getItem('cartProducts')
   ? JSON.parse(localStorage.getItem('cartProducts'))
@@ -54,6 +59,9 @@ const store = configureStore({
     userDetails: userDetailsReducer,
     userUpdateProfile: userUpdateProfileReducer,
     orderCreate: orderCreateReducer,
+    orderDetails: orderDetailsReducer,
+    orderPay: orderPayReducer,
+    myOrderList: myOrderListReducer,
   },
   preloadedState: initialState, // 這裡放之前的 initialState
 });

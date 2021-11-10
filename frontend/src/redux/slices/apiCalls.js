@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { addProduct } from './cartSlice';
+import { addProduct, cartReset } from './cartSlice';
 import {
   loginRequest,
   loginSuccess,
@@ -18,6 +18,15 @@ import {
   orderCreateRequest,
   orderCreateSuccess,
   orderCreateFail,
+  orderDetailsRequest,
+  orderDetailsSuccess,
+  orderDetailsFail,
+  orderPayRequest,
+  orderPaySuccess,
+  orderPayFail,
+  myOrderListRequest,
+  myOrderListSuccess,
+  myOrderListFail,
 } from './orderSlices';
 
 // cart
@@ -30,6 +39,7 @@ export const addToCart = (id, quantity) => async (dispatch, getState) => {
   // 所以在這邊先檢查 localStorage 內有沒有存在同樣商品，有的話檢查 用戶在商品頁面的購買數量 + 購物車內該商品數量 是否超過庫存總量
   const cartProductsFromLocalStorage =
     JSON.parse(localStorage.getItem('cartProducts')) || [];
+
   const currentProduct = cartProductsFromLocalStorage.find((p) => {
     return id === p._id;
   });
@@ -46,7 +56,7 @@ export const addToCart = (id, quantity) => async (dispatch, getState) => {
   if (quantity + checkCartProductQuantity() <= data.countInStock) {
     dispatch(
       addProduct({
-        _id: data._id, // 命名一定要符合 Schema 當初設計的 key,否則到時候這筆資料向後端請求操作 DB 的時候會出事
+        _id: data._id, // 命名一定要符合 Schema 當初設計的 key,否則到時候這筆資料向後端請求操作 DB 的時候會出事(例如建立商品訂單時)
         name: data.name,
         image: data.image,
         price: data.price,
@@ -143,7 +153,6 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
@@ -200,8 +209,6 @@ export const createOrder = (order) => async (dispatch, getState) => {
   try {
     dispatch(orderCreateRequest());
 
-    console.log(order);
-
     const {
       userLogin: { userInfo },
     } = getState(); // 解構語法取得 userInfo 拿 token
@@ -216,9 +223,103 @@ export const createOrder = (order) => async (dispatch, getState) => {
     const { data } = await axios.post('/api/orders', order, config);
 
     dispatch(orderCreateSuccess(data));
+    dispatch(cartReset()); // 創建訂單的同時清空購物車(和local storage)
   } catch (error) {
     dispatch(
       orderCreateFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const getOrderDetails = (orderId) => async (dispatch, getState) => {
+  try {
+    dispatch(orderDetailsRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    // GET req 不需要 Content-Type
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    // 從 DB 中獲取訂單，方便之後 admin 可以將它們標記為已交付等等。
+    const { data } = await axios.get(`/api/orders/${orderId}`, config);
+
+    dispatch(orderDetailsSuccess(data));
+  } catch (error) {
+    dispatch(
+      orderDetailsFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const payOrder =
+  (orderId, paymentResult) => async (dispatch, getState) => {
+    try {
+      dispatch(orderPayRequest());
+
+      const {
+        userLogin: { userInfo },
+      } = getState(); // 解構語法取得 userInfo 拿 token
+
+      // GET req 不需要 Content-Type
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/orders/${orderId}/pay`,
+        paymentResult,
+        config
+      );
+
+      dispatch(orderPaySuccess(data));
+    } catch (error) {
+      dispatch(
+        orderPayFail(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
+    }
+  };
+
+export const listMyOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch(myOrderListRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get('/api/orders/myorders', config);
+
+    dispatch(myOrderListSuccess(data));
+  } catch (error) {
+    dispatch(
+      myOrderListFail(
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message

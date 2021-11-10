@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { logout, userLogout } from '../redux/slices/userSlices';
+import { cartReset } from '../redux/slices/cartSlice';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const Header = () => {
     localStorage.removeItem('userInfo');
     dispatch(logout());
     dispatch(userLogout()); // userRegister state 也要記得清掉
+    dispatch(cartReset()); // 清空購物車(local storage 也要記得清)
     document.location.href = '/login';
   };
 

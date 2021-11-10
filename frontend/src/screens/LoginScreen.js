@@ -14,7 +14,7 @@ const LoginScreen = ({ location, history }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo, loading, error } = userLogin;
+  const { userInfo, pending, error } = userLogin;
 
   const redirect = location.search ? location.search.split('=')[1] : '/'; // '/' 回到 HomeScreen
 
@@ -33,7 +33,7 @@ const LoginScreen = ({ location, history }) => {
     <FormContainer>
       <h1 className='text-center'>登入</h1>
       {error && <Message variant='danger'>{error}</Message>}
-      {loading && <Loader />}
+      {pending && <Loader loaderType2 />}
       <Form onSubmit={submitHandler}>
         <Form.Group className='mb-3' controlId='email'>
           <Form.Label>帳號</Form.Label>

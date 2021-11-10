@@ -16,7 +16,7 @@ const RegisterScreen = ({ location, history }) => {
 
   const dispatch = useDispatch();
 
-  const { userInfo, loading, error } = useSelector(
+  const { userInfo, pending, error } = useSelector(
     (state) => state.userRegister
   );
 
@@ -42,7 +42,7 @@ const RegisterScreen = ({ location, history }) => {
       <h1 className='text-center'>註冊</h1>
       {message && <Message variant='danger'>{message}</Message>}
       {error && <Message variant='danger'>{error}</Message>}
-      {loading && <Loader />}
+      {pending && <Loader loaderType2 />}
       <Form onSubmit={submitHandler}>
         <Form.Group className='mb-3' controlId='name'>
           <Form.Label>姓名</Form.Label>

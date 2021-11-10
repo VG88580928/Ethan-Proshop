@@ -31,6 +31,13 @@ export const cartSlice = createSlice({
       localStorage.setItem('cartProducts', JSON.stringify(state.products)); // 記得刪完 state 裡的 product後，也要更新 localStorage
       localStorage.setItem('cartQuantity', JSON.stringify(state.quantity));
     },
+    cartReset: (state) => {
+      state.products = [];
+      state.quantity = 0;
+
+      localStorage.setItem('cartProducts', JSON.stringify([])); // 也要記得刪 localStorage
+      localStorage.setItem('cartQuantity', JSON.stringify(0));
+    },
     saveShippingAddress: (state, action) => {
       state.shippingAddress = action.payload;
 
@@ -55,6 +62,7 @@ export const cartSlice = createSlice({
 export const {
   addProduct,
   removeProduct,
+  cartReset,
   saveShippingAddress,
   savePaymentMethod,
 } = cartSlice.actions;

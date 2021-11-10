@@ -13,17 +13,16 @@ const PlaceOrderScreen = ({ history }) => {
     (state) => state.cart
   );
 
-  // 價錢計算
-
-  // ECMAScript Internationalization API (只有 IE 不支援) 來源: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#browser_compatibility
+  // 處理金額格式 (Intl) ECMAScript Internationalization API (只有 IE 不支援) 來源: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#browser_compatibility
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
   });
 
+  // 價錢計算
   const addDecimals = (num) => {
-    return num.toFixed(2); // toFixed 回傳 string ex: 25.2.toFixed(2) would return '25.20',要注意如果把 '25.20' 執行 Number('25.20'),尾數 0 會被自動移除)
+    return num.toFixed(2); // toFixed 返回 string ex: 25.2.toFixed(2) would return '25.20',要注意如果把'25.20'執行 Number('25.20'),尾數 0 會被自動移除)
   };
 
   const itemsPrice = addDecimals(
@@ -34,25 +33,23 @@ const PlaceOrderScreen = ({ history }) => {
 
   const shippingPrice = addDecimals(itemsPrice >= 300 ? 0 : 10); // 滿三百免運
 
-  const taxPrice = addDecimals(Number(itemsPrice * 0.05));
+  const taxPrice = addDecimals(itemsPrice * 0.05);
 
   const totalPrice = addDecimals(
-    Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)
+    Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice) // 記得轉成數字,因為被 toFixed(2) 後數字都轉成 string 了，直接加起來會出事
   );
 
-  // 處理金額格式 (Intl)
-  const formattedItemsPrice = formatter.format(itemsPrice);
-  const formattedShippingPrice = formatter.format(shippingPrice);
-  const formattedTaxPrice = formatter.format(taxPrice);
-  const formattedTotalPrice = formatter.format(totalPrice);
-
   const { order, success, error } = useSelector((state) => state.orderCreate);
+
+  const { userInfo } = useSelector((state) => state.userLogin);
 
   useEffect(() => {
     if (success) {
       history.push(`/order/${order._id}`); // order._id 是創建 orders collection 時自動生成的 _id
+    } else if (!userInfo) {
+      history.push('/login');
     }
-  }, [history, success, order]);
+  }, [history, success, order, userInfo]);
 
   const placeOrderHandler = () => {
     dispatch(
@@ -112,7 +109,7 @@ const PlaceOrderScreen = ({ history }) => {
                           ></Image>
                         </Col>
                         <Col>
-                          <NavLink to={`/product/${product.product}`}>
+                          <NavLink to={`/product/${product._id}`}>
                             {product.name}
                           </NavLink>
                         </Col>
@@ -138,28 +135,28 @@ const PlaceOrderScreen = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col>項目</Col>
-                  <Col>{formattedItemsPrice}</Col>
+                  <Col>{formatter.format(itemsPrice)}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>運費(滿三百免運)</Col>
-                  <Col>{formattedShippingPrice}</Col>
+                  <Col>{formatter.format(shippingPrice)}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>稅額(5%)</Col>
-                  <Col>{formattedTaxPrice}</Col>
+                  <Col>{formatter.format(taxPrice)}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>總計</Col>
-                  <Col>{formattedTotalPrice}</Col>
+                  <Col>{formatter.format(totalPrice)}</Col>
                 </Row>
               </ListGroup.Item>
 

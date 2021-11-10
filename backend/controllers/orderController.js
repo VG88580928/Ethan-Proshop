@@ -38,7 +38,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
     // instantiate new order
     const order = new Order({
       orderItems,
-      user: req.user._id, // 在 protect 解碼 token 取得的 user id
+      user: req.user._id, // 在 protect middleware 解碼 token 取得的 user id
       shippingAddress,
       paymentMethod,
       itemsPrice,
@@ -47,7 +47,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
       totalPrice,
     });
 
-    // 在把資料存進 DB 前，確保商品價格正確沒有被 user 串改
+    // 在把資料存進 DB 前，確保商品價格正確沒有被 user 串改 ()
     for (let i = 0, l = order.orderItems.length; i < l; i++) {
       const product = await Product.findById(order.orderItems[i]._id);
 
@@ -55,6 +55,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
         order.orderItems[i].price = product.price;
       }
     }
+    // 目前 itemsPrice & shippingPrice & taxPrice & totalPrice 都還有被串改可能，目前我想的到的方法都必須多次查詢資料庫，也需要在 controller 做多次運算，很耗效能，所以此安全性問題暫時先擱置。
 
     const createdOrder = await order.save(); // save() 和 create() 差別是 create() 是結合兩者 => instantiate new mongoose Model and save it
 
@@ -62,4 +63,60 @@ const addOrderItems = asyncHandler(async (req, res) => {
   }
 });
 
-export { addOrderItems };
+// @描述: GET order by order ID
+// @route: GET /api/orders/:id
+// @使用權: Private
+const getOrderById = asyncHandler(async (req, res) => {
+  // 順便利用 populate() 取得與該 order 相關聯的 user document 內的 name 和 email,這裡的第一個參數 'user' 是當初在 Order model schema 中第一個 property 'user',利用這個從 User schema 引用來的 user id 獲得該 user document 資訊
+  const order = await Order.findById(req.params.id).populate(
+    'user',
+    'name email'
+  );
+
+  // 確認存在訂單且用戶要馬是 admin，要馬是一般用戶，否則不回傳訂單
+  // 這邊檢查訂單是否為該用戶時如果寫 order.user._id === req.user._id 會不如預期(因為我們比較的是 ObjectID，用 == or === 比較物件會有 reference 問題)
+  // 解法參考: https://stackoverflow.com/questions/11060213/mongoose-objectid-comparisons-fail-inconsistently  &&  http://mongodb.github.io/node-mongodb-native/api-bson-generated/objectid.html#equals (equals 方法)
+  if (order && (req.user.isAdmin || order.user._id.equals(req.user._id))) {
+    res.json(order);
+  } else {
+    res.status(404);
+    throw new Error('查無此訂單');
+  }
+});
+
+// @描述: Update order to paid
+// @route: PUT /api/orders/:id/pay
+// @使用權: Private
+const updateOrderToPaid = asyncHandler(async (req, res) => {
+  // 發現此路由的安全性風險: user 可以不經過付款就讓 order 變成 isPaid
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      // paymentResult 存取 Paypal API 回傳的結果
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.payer.email_address,
+    };
+
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('查無此訂單');
+  }
+});
+
+// @描述: GET logged in user orders
+// @route: GET /api/orders/myorders
+// @使用權: Private
+const getMyOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.user._id }); // 用該 user id 來找到他的所有 orders
+  res.json(orders);
+});
+
+export { addOrderItems, getOrderById, updateOrderToPaid, getMyOrders };

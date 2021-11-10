@@ -30,7 +30,7 @@ const CartScreen = ({ history }) => {
 
   const cartProducts = useSelector((state) => state.cart.products);
   const qty = useSelector((state) => state.cart.quantity);
-  let total = cartProducts
+  const total = cartProducts
     .reduce((acc, p) => acc + p.quantity * p.price, 0)
     .toFixed(2);
 
@@ -39,8 +39,6 @@ const CartScreen = ({ history }) => {
     currency: 'USD',
     minimumFractionDigits: 2,
   });
-
-  total = formatter.format(total);
 
   // useEffect(() => {
   //   // 只有在頁面有拿到 ID 時才執行 addToCart(就是按加入購物車時)，從右上角進入購物車時不執行
@@ -157,7 +155,7 @@ const CartScreen = ({ history }) => {
           <ListGroup variant='flush'>
             <ListGroupItem>
               <h2>共 {qty} 種商品</h2>
-              <p className='fs-5'>總計 : {total}</p>
+              <p className='fs-5'>總計 : {formatter.format(total)}</p>
             </ListGroupItem>
             <ListGroupItem>
               <div className='d-grid'>

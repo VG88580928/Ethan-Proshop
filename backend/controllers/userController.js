@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('帳號已被使用過囉');
   }
 
-  const user = await User.create({ name, email, password }); // create 前自動執行 pre('save')加密密碼，因為 create 是 save 的語法糖
+  const user = await User.create({ name, email, password }); // create 前自動執行 pre('save')加密密碼，因為 create 是 save 的語法糖(實例化 model 並存進 DB)
 
   // 回傳和登入時一樣的 object,註冊完可以立刻驗證
   if (user) {

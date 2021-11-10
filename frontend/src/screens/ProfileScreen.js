@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
+import { Form, Button, Row, Col, Table } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getUserDetails, updateUserProfile } from '../redux/slices/apiCalls';
+import {
+  getUserDetails,
+  updateUserProfile,
+  listMyOrders,
+} from '../redux/slices/apiCalls';
 
 const ProfileScreen = ({ location, history }) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  });
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,15 +25,19 @@ const ProfileScreen = ({ location, history }) => {
 
   const dispatch = useDispatch();
 
-  const userDetails = useSelector((state) => state.userDetails);
-  const { user, loading, error } = userDetails;
+  const { user, pending, error } = useSelector((state) => state.userDetails);
 
-  const { userInfo } = useSelector((state) => state.userLogin); // 看看用戶是否登入
+  const { userInfo } = useSelector((state) => state.userLogin); // 用來查看用戶是否登入
 
-  const userUpdateProfile = useSelector((state) => state.userUpdateProfile); // 看看用戶是否登入
-  const { success } = userUpdateProfile;
+  const { success, error: updateError } = useSelector(
+    (state) => state.userUpdateProfile
+  );
 
-  const updateError = userUpdateProfile.error;
+  const {
+    orders,
+    pending: myOrdersPending,
+    error: myOrdersError,
+  } = useSelector((state) => state.myOrderList);
 
   useEffect(() => {
     // 若用戶沒登入無法進入此 protected route
@@ -31,8 +46,9 @@ const ProfileScreen = ({ location, history }) => {
     } else {
       if (!user.name) {
         dispatch(getUserDetails('profile'));
+        dispatch(listMyOrders());
       } else {
-        setName(user.name);
+        setName(user.name); // 進頁面拿到 user 資料後在更新個資欄位自動填入 user 姓名和信箱
         setEmail(user.email);
       }
     }
@@ -57,7 +73,7 @@ const ProfileScreen = ({ location, history }) => {
           <Message variant='danger'>該帳號已經有人使用囉!</Message>
         )}
         {success && <Message variant='success'>資料更新成功!</Message>}
-        {loading && <Loader />}
+        {pending && <Loader loaderType2 />}
         <Form onSubmit={submitHandler}>
           <Form.Group className='mb-3' controlId='name'>
             <Form.Label>姓名</Form.Label>
@@ -108,6 +124,56 @@ const ProfileScreen = ({ location, history }) => {
       </Col>
       <Col md={9}>
         <h2 className='text-center'>我的訂單</h2>
+        {myOrdersPending ? (
+          <Loader loaderType2 />
+        ) : myOrdersError ? (
+          <Message variant='danger'>{myOrdersError}</Message>
+        ) : (
+          <Table responsive hover>
+            <thead>
+              <tr>
+                <th>訂單 ID</th>
+                <th>創建日期</th>
+                <th>總金額</th>
+                <th>付款日期</th>
+                <th>運送日期</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{formatter.format(order.totalPrice)}</td>
+                  <td>
+                    {order.isPaid ? (
+                      `${order.paidAt.substring(0, 10)}`
+                    ) : (
+                      <i className='fas fa-times' style={{ color: 'red' }}></i>
+                    )}
+                  </td>
+                  <td>
+                    {order.isDelivered ? (
+                      `${order.deliveredAt.substring(0, 10)} 抵達`
+                    ) : (
+                      <i className='fas fa-times' style={{ color: 'red' }}></i>
+                    )}
+                  </td>
+                  <td>
+                    <Button
+                      class='btn btn-info btn-sm'
+                      as={NavLink}
+                      to={`/order/${order._id}`}
+                    >
+                      詳細
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </Col>
     </Row>
   );
