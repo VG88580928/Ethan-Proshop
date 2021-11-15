@@ -40,26 +40,33 @@ const ProfileScreen = ({ location, history }) => {
   } = useSelector((state) => state.myOrderList);
 
   useEffect(() => {
+    dispatch(listMyOrders()); // 確保每次進頁面都取得最新 orders
+
     // 若用戶沒登入無法進入此 protected route
     if (!userInfo) {
       history.push('/login');
+
+      // userInfo._id !== user._id 確保當我是 admin 時，去到 userEditScreen 時 userDetails 變成別的 user，回來此頁面時可以更新
+    } else if (!user.name || userInfo._id !== user._id) {
+      dispatch(getUserDetails('profile')); // server 有兩個 API 一支提供一般用戶獲取用戶資訊(GET /api/users/profile)，另一支是管理員專用(GET /api/users/:id)
+      // dispatch(listMyOrders()); 原本寫在這邊，但發現問題 -> 首次進個資頁面訂單會更新，但此時直接再去下訂第二筆訂單後，再進個人資料頁面時會發現第二筆訂單沒有更新到(因為第一次進訂單頁面後我們會拿到 user.name,而 user.name 在第二次進個資頁面時會保持 true 就不更新 order 了。
     } else {
-      if (!user.name) {
-        dispatch(getUserDetails('profile'));
-        dispatch(listMyOrders());
-      } else {
-        setName(user.name); // 進頁面拿到 user 資料後在更新個資欄位自動填入 user 姓名和信箱
-        setEmail(user.email);
-      }
+      // 進頁面拿到 user 資料後在更新個資欄位自動填入 user 姓名和信箱
+      setName(user.name);
+      setEmail(user.email);
     }
-  }, [dispatch, userInfo, history, user]);
+    // 原本偷懶直接把 user object 當成依賴寫進去，結果出現無窮迴圈，因此把 user 拆成 user.name && user.email && user._id (參考資料: https://dmitripavlutin.com/react-useeffect-infinite-loop/ 的 2.1 Avoid objects as dependencies)
+  }, [dispatch, userInfo, history, user.name, user.email, user._id]);
 
   const submitHandler = (e) => {
     e.preventDefault(); // 防止頁面 reload
     if (password !== confirmPassword) {
       setMessage('密碼不匹配');
     } else {
-      dispatch(updateUserProfile({ id: user._id, name, email, password }));
+      dispatch(
+        // name.trim() 防止有人名字前後打一堆空白鍵 or 只打一堆空白鍵
+        updateUserProfile({ id: user._id, name: name.trim(), email, password })
+      );
     }
   };
 
@@ -133,10 +140,10 @@ const ProfileScreen = ({ location, history }) => {
             <thead>
               <tr>
                 <th>訂單 ID</th>
-                <th>創建日期</th>
-                <th>總金額</th>
-                <th>付款日期</th>
-                <th>運送日期</th>
+                <th>創建</th>
+                <th>金額</th>
+                <th>付款</th>
+                <th>運送</th>
                 <th></th>
               </tr>
             </thead>
@@ -162,7 +169,7 @@ const ProfileScreen = ({ location, history }) => {
                   </td>
                   <td>
                     <Button
-                      class='btn btn-info btn-sm'
+                      className='btn btn-info btn-sm'
                       as={NavLink}
                       to={`/order/${order._id}`}
                     >

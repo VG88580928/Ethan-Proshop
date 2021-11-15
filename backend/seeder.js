@@ -15,6 +15,7 @@ dotenv.config();
 
 connectDB();
 
+// 把 data 資料夾預先寫好的 users & products 資料打進 DB 做測試
 const importData = async () => {
   try {
     // 先清空 DB
@@ -22,10 +23,10 @@ const importData = async () => {
     await User.deleteMany();
     await Product.deleteMany();
 
-    const createUsers = await User.insertMany(users); // insert data to DB
-    const adminUser = createUsers[0]._id;
+    const createUsers = await User.insertMany(users); // insert users data to DB
+    const adminUser = createUsers[0]._id; // users data 第一筆是管理員，存取管理員 id
 
-    // 把 adminUser 資訊放進當前 products
+    // 把 adminUser 資訊放進當前 products,表示這些商品由此管理員所創建
     const sampleProducts = products.map((product) => {
       return { ...product, user: adminUser };
     });
@@ -56,10 +57,12 @@ const destroyData = async () => {
   }
 };
 
-/* process.argv[index] 舉例: node process-args.js one two=three four
-0: /usr/local/bin/node
-1: /Users/mjr/work/node/process-args.js
-2: one   etc...*/
+/* process.argv[index] 舉例:在終端上寫 -> node process-args.js one two=three four
+process.argv[0] 回傳 /usr/local/bin/node
+process.argv[1] 回傳 /Users/mjr/work/node/process-args.js
+process.argv[2] 回傳 one   
+process.argv[3] 回傳 two=three
+etc...*/
 if (process.argv[2] === '-d') {
   destroyData();
 } else {

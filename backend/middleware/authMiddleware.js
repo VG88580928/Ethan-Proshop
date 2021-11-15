@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler'; // 參數有 next 也會幫我們在最後面自動執行 next()
 import User from '../models/userModel.js';
 
+// protect middleware: 確保使用者 req 打進 protected route 之前都有攜帶 token，並解碼 token 取得 user id 後從 DB 獲取該 user's document，並放到 req.user 裡
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -30,4 +31,15 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { protect };
+// admin middleware: 確保這些 req 都是 '已登入的 admin' 發出的
+const admin = (req, res, next) => {
+  // 確認使用者已登入且為 admin
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.status(401); // 401 未經授權
+    throw new Error('not authorized as an admin');
+  }
+};
+
+export { protect, admin };

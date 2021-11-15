@@ -66,7 +66,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin, // 這邊不用再丟 token 回去了(登入的時候丟就好)
+      isAdmin: user.isAdmin, // 這邊不用再丟 token 回去了(登入 & 修改個資 的時候丟就好)
     });
   } else {
     res.status(404);
@@ -83,7 +83,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name; // 如果用戶沒改名字就保持原本
     user.email = req.body.email || user.email;
-    user.password = req.body.password || user.password;
+    user.password = req.body.password || user.password; // 這裡的 req.body.password 還沒被加密，待會 save() 進 DB 前會先加密，但如果用戶更改資料時沒改密碼，這個本來的 user.password 進 DB 之前還是會再被加密一次，不知道這會不會有甚麼問題
 
     const updatedUser = await user.save(); // update a document with Mongoose.(save 會自動觸發執行 userSchema.pre 函式加密密碼)
 
@@ -100,4 +100,78 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, getUserProfile, updateUserProfile };
+// @描述: GET all users (Admin only)
+// @route: GET /api/users
+// @使用權: Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({});
+  res.json(users);
+});
+
+// @描述: DELETE user (Admin only)
+// @route: DELETE /api/users/:id   (以 id 來刪除該特定 user)
+// @使用權: Private/Admin
+const deleteUser = asyncHandler(async (req, res) => {
+  // findOneAndRemove() 可以直接找到 user 並刪除，但我這邊選擇先 findById() 再 remove() 的原因是因為這樣我就可以在 remove() 之前再多做一些額外的檢查
+  const user = await User.findById(req.params.id); // 找到要刪除的 user
+
+  if (user) {
+    await user.remove(); // 刪除用戶
+    res.json({ message: '用戶已刪除' });
+  } else {
+    res.status(404);
+    throw new Error('查無此用戶');
+  }
+});
+
+// @描述: GET user by ID (Admin only)
+// @route: GET /api/users/:id
+// @使用權: Private/Admin
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password'); // 用 url 上後面的 id 找到 user
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('查無此用戶');
+  }
+});
+
+// @描述: Update user (Admin only)
+// @route: PUT /api/users/:id
+// @使用權: Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.name = req.body.name || user.name; // 如果用戶沒改名字就保持原本
+    user.email = req.body.email || user.email;
+    user.isAdmin =
+      req.body.isAdmin === undefined ? user.isAdmin : req.body.isAdmin; // 如果 client 端沒傳 isAdmin 回來 (undefined)，就保持原本 (用 undefined 檢查可以讓 管理員>一般用戶 && 一般用戶>管理員 的更改都順利執行)
+
+    const updatedUser = await user.save(); // update a document with Mongoose.(save 會自動觸發執行 userSchema.pre 函式加密密碼)
+
+    // 沒有提供管理員改密碼功能，就不回傳新 token 了
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+export {
+  authUser,
+  registerUser,
+  getUserProfile,
+  updateUserProfile,
+  getUsers,
+  deleteUser,
+  getUserById,
+  updateUser,
+};

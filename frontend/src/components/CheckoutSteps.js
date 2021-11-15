@@ -29,7 +29,7 @@ const CheckoutSteps = ({ step1, step2, step3 }) => {
       <Nav.Item data-number='3'>
         {step3 ? (
           <Nav.Link as={NavLink} to='/placeorder'>
-            送出訂單
+            創建訂單
           </Nav.Link>
         ) : (
           <Nav.Link disabled>送出訂單</Nav.Link>

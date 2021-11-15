@@ -44,6 +44,11 @@ a {
 a:hover {
   color: #18191a;
 }
+
+.userlist-edit-disabled {
+  pointer-events: none;
+  opacity: 0.65;
+}
 /* Header */
 header.fixed-top {
   position: fixed;
@@ -163,7 +168,7 @@ footer {
   margin: 0.1rem;
 }
 
-/* Product-Screen */
+/* ProductScreen */
 .product-screen .input-group {
   justify-content: center;
 }
@@ -188,7 +193,7 @@ footer {
   }
 }
 
-/* Cart-Screen */
+/* CartScreen */
 .cart-screen .list-group-item .row {
   justify-content: center;
   align-items: center;
@@ -257,4 +262,9 @@ footer {
   color: #fff;
   text-align: center;
   font-size: 14px;
+}
+
+/* Modal */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.75);
 }

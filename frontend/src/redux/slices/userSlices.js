@@ -75,6 +75,61 @@ export const userUpdateProfileSlice = createSlice({
   },
 });
 
+export const userListSlice = createSlice({
+  name: 'userList',
+  initialState: { users: [] },
+  reducers: {
+    userListRequest: (state) => {
+      state.pending = true;
+    },
+    userListSuccess: (state, action) => {
+      state.pending = false;
+      state.users = action.payload;
+    },
+    userListFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+  },
+});
+
+export const userDeleteSlice = createSlice({
+  name: 'userDelete',
+  initialState: {},
+  reducers: {
+    userDeleteRequest: (state) => {
+      state.pending = true;
+    },
+    userDeleteSuccess: (state) => {
+      state.pending = false;
+      state.success = true;
+    },
+    userDeleteFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+  },
+});
+
+export const userUpdateSlice = createSlice({
+  name: 'userUpdate',
+  initialState: {},
+  reducers: {
+    userUpdateRequest: (state) => {
+      state.pending = true;
+    },
+    userUpdateSuccess: (state) => {
+      state.pending = false;
+      state.success = true;
+    },
+    userUpdateFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+    userUpdateReset: (state) => (state = {}),
+  },
+});
+
 // Action creaters
 export const { loginRequest, loginSuccess, loginFail, logout } =
   userLoginSlice.actions;
@@ -84,9 +139,22 @@ export const { detailsRequest, detailsSuccess, detailsFail } =
   userDetailsSlice.actions;
 export const { updateProfileRequest, updateProfileSuccess, updateProfileFail } =
   userUpdateProfileSlice.actions;
+export const { userListRequest, userListSuccess, userListFail } =
+  userListSlice.actions;
+export const { userDeleteRequest, userDeleteSuccess, userDeleteFail } =
+  userDeleteSlice.actions;
+export const {
+  userUpdateRequest,
+  userUpdateSuccess,
+  userUpdateFail,
+  userUpdateReset,
+} = userUpdateSlice.actions;
 
 // Reducers
 export const userLoginReducer = userLoginSlice.reducer;
 export const userRegisterReducer = userRegisterSlice.reducer;
 export const userDetailsReducer = userDetailsSlice.reducer;
 export const userUpdateProfileReducer = userUpdateProfileSlice.reducer;
+export const userListReducer = userListSlice.reducer;
+export const userDeleteReducer = userDeleteSlice.reducer;
+export const userUpdateReducer = userUpdateSlice.reducer;

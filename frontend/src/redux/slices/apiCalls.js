@@ -13,6 +13,15 @@ import {
   updateProfileRequest,
   updateProfileSuccess,
   updateProfileFail,
+  userListRequest,
+  userListSuccess,
+  userListFail,
+  userDeleteRequest,
+  userDeleteSuccess,
+  userDeleteFail,
+  userUpdateRequest,
+  userUpdateSuccess,
+  userUpdateFail,
 } from './userSlices';
 import {
   orderCreateRequest,
@@ -188,14 +197,100 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
     const { data } = await axios.put('/api/users/profile', user, config);
 
-    dispatch(updateProfileSuccess(data));
-    dispatch(detailsSuccess(data));
+    dispatch(updateProfileSuccess(data)); // 這邊也許不用帶 data 進來(好像沒用到這筆資料)
+    dispatch(detailsSuccess(data)); // 改完個人資料後把舊資料更新成新的
     dispatch(loginSuccess(data)); // 記得同時更新 userLogin，不然右上角的名字會是舊的
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    localStorage.setItem('userInfo', JSON.stringify(data)); // server 會生成新的 token，所以這邊 token 也會更新
   } catch (error) {
     dispatch(
       updateProfileFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const listUsers = () => async (dispatch, getState) => {
+  try {
+    dispatch(userListRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get('/api/users', config);
+
+    dispatch(userListSuccess(data));
+  } catch (error) {
+    dispatch(
+      userListFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const deleteUser = (userId) => async (dispatch, getState) => {
+  try {
+    dispatch(userDeleteRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.delete(`/api/users/${userId}`, config);
+
+    dispatch(userDeleteSuccess());
+  } catch (error) {
+    dispatch(
+      userDeleteFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const updateUser = (user) => async (dispatch, getState) => {
+  try {
+    dispatch(userUpdateRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(`/api/users/${user._id}`, user, config);
+
+    dispatch(userUpdateSuccess());
+    dispatch(detailsSuccess(data)); // 改完個人資料後把舊資料更新成新的
+  } catch (error) {
+    dispatch(
+      userUpdateFail(
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message

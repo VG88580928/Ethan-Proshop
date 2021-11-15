@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { createOrder } from '../redux/slices/apiCalls';
+import Loader from '../components/Loader';
+import { orderCreateReset } from '../redux/slices/orderSlices';
 
 const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -39,17 +41,20 @@ const PlaceOrderScreen = ({ history }) => {
     Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice) // 記得轉成數字,因為被 toFixed(2) 後數字都轉成 string 了，直接加起來會出事
   );
 
-  const { order, success, error } = useSelector((state) => state.orderCreate);
+  const { order, success, error, pending } = useSelector(
+    (state) => state.orderCreate
+  );
 
   const { userInfo } = useSelector((state) => state.userLogin);
 
   useEffect(() => {
     if (success) {
       history.push(`/order/${order._id}`); // order._id 是創建 orders collection 時自動生成的 _id
+      dispatch(orderCreateReset()); // 創建完要記得 reset orderCreate,不然 success 一直保持在 true 的話，創完第一筆訂單要再創第二筆訂單時，進此頁面會直接被導向 orderScreen(並留下剛剛上筆訂單的內容) 而無法創建新訂單
     } else if (!userInfo) {
       history.push('/login');
     }
-  }, [history, success, order, userInfo]);
+  }, [dispatch, history, success, order, userInfo]);
 
   const placeOrderHandler = () => {
     dispatch(
@@ -165,16 +170,21 @@ const PlaceOrderScreen = ({ history }) => {
               </ListGroup.Item>
 
               <ListGroup.Item>
-                <div className='d-grid'>
-                  <Button
-                    className='fs-5'
-                    type='button'
-                    disabled={!products.length}
-                    onClick={placeOrderHandler}
-                  >
-                    送出訂單
-                  </Button>
-                </div>
+                {/* 這裡很重要，如果沒設置這個 loader，如果有人在創建訂單的時間內點擊數次，就會創建多組相同訂單 */}
+                {pending ? (
+                  <Loader loaderType2 />
+                ) : (
+                  <div className='d-grid'>
+                    <Button
+                      className='fs-5'
+                      type='button'
+                      disabled={!products.length}
+                      onClick={placeOrderHandler}
+                    >
+                      創建訂單
+                    </Button>
+                  </div>
+                )}
               </ListGroup.Item>
             </ListGroup>
           </Card>

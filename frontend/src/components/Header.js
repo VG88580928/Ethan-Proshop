@@ -14,10 +14,12 @@ const Header = () => {
 
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('shippingAddress');
+    localStorage.removeItem('paymentMethod');
     dispatch(logout());
     dispatch(userLogout()); // userRegister state 也要記得清掉
     dispatch(cartReset()); // 清空購物車(local storage 也要記得清)
-    document.location.href = '/login';
+    document.location.href = '/login'; // 如果這邊回首頁('/') 畫面會先跳轉登入頁面才回首頁(因為很多頁面會觸發 useEffect,清空 userLogin 時會導向登入頁面)，所以直接回登入頁面畫面比較順
   };
 
   return (
@@ -55,6 +57,19 @@ const Header = () => {
                   {/* 中間空位不用條CSS，直接空白鍵就行了 */}
                   <i className='fas fa-user fs-6'> 登入</i>
                 </Nav.Link>
+              )}
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title='管理員' className='ms-3' id='adminmenu'>
+                  <NavDropdown.Item as={NavLink} to='/admin/userlist'>
+                    用戶列表
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={NavLink} to='/admin/productlist'>
+                    商品列表
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={NavLink} to='/admin/orderlist'>
+                    訂單列表
+                  </NavDropdown.Item>
+                </NavDropdown>
               )}
             </Nav>
           </Navbar.Collapse>

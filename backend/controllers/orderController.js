@@ -55,7 +55,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
         order.orderItems[i].price = product.price;
       }
     }
-    // 目前 itemsPrice & shippingPrice & taxPrice & totalPrice 都還有被串改可能，目前我想的到的方法都必須多次查詢資料庫，也需要在 controller 做多次運算，很耗效能，所以此安全性問題暫時先擱置。
+    // 目前 itemsPrice & shippingPrice & taxPrice & totalPrice 都還有被串改可能，如果要保持購物車商品放在 local storage 裡，目前我想的到的方法都必須多次查詢資料庫，也需要在 controller 內做多次運算，很耗效能，所以此安全性問題暫時先擱置。
 
     const createdOrder = await order.save(); // save() 和 create() 差別是 create() 是結合兩者 => instantiate new mongoose Model and save it
 
@@ -115,7 +115,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 // @route: GET /api/orders/myorders
 // @使用權: Private
 const getMyOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ user: req.user._id }); // 用該 user id 來找到他的所有 orders
+  const orders = await Order.find({ user: req.user._id }); // 用該 user id 來找到他所擁有的全部 orders
   res.json(orders);
 });
 

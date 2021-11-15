@@ -16,6 +16,7 @@ export const orderCreateSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
+    orderCreateReset: (state) => (state = {}),
   },
 });
 
@@ -75,8 +76,12 @@ export const myOrderListSlice = createSlice({
 });
 
 // Action creaters
-export const { orderCreateRequest, orderCreateSuccess, orderCreateFail } =
-  orderCreateSlice.actions;
+export const {
+  orderCreateRequest,
+  orderCreateSuccess,
+  orderCreateFail,
+  orderCreateReset,
+} = orderCreateSlice.actions;
 export const { orderDetailsRequest, orderDetailsSuccess, orderDetailsFail } =
   orderDetailsSlice.actions;
 export const { orderPayRequest, orderPaySuccess, orderPayFail, orderPayReset } =
