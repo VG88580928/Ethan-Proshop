@@ -15,7 +15,7 @@ export const userLoginSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    logout: (state) => (state = {}), // 清空 state (若 initialState 有其他初始值也會一併清空)
+    logout: () => ({}), // 清空 state (若 initialState 有其他初始值也會一併清空)
   },
 });
 
@@ -34,7 +34,7 @@ export const userRegisterSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    userLogout: (state) => (state = {}),
+    userLogout: () => ({}),
   },
 });
 
@@ -126,11 +126,11 @@ export const userUpdateSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    userUpdateReset: (state) => (state = {}),
+    userUpdateReset: () => ({}),
   },
 });
 
-// Action creaters
+// 導出 Action creaters
 export const { loginRequest, loginSuccess, loginFail, logout } =
   userLoginSlice.actions;
 export const { registerRequest, registerSuccess, registerFail, userLogout } =
@@ -150,7 +150,7 @@ export const {
   userUpdateReset,
 } = userUpdateSlice.actions;
 
-// Reducers
+// 導出 Reducers
 export const userLoginReducer = userLoginSlice.reducer;
 export const userRegisterReducer = userRegisterSlice.reducer;
 export const userDetailsReducer = userDetailsSlice.reducer;

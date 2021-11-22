@@ -58,6 +58,7 @@ const ProductScreen = ({ history, match }) => {
   //   quantity > 0 && history.push(`/cart/${match.params.id}?qty=${quantity}`);
   // };
 
+  // 這裡如果不使用 async 寫法，超過庫存警告會在跳轉到購物車頁面後才出現，我希望他在跳轉前就出現因此使用 async 寫法
   const addToCartHandler = async () => {
     await dispatch(addToCart(product._id, quantity));
     history.push('/cart'); // 小知識: 'cart' 和 '/cart' 兩種寫法差別在前面會直接疊上去，例如本來在 /product => /product/cart(這是因為 /product/:id 後面有一個 :id 會變成 cart)，後者是本來在 /product => /cart

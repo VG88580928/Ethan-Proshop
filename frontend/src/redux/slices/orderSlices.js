@@ -16,7 +16,7 @@ export const orderCreateSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    orderCreateReset: (state) => (state = {}),
+    orderCreateReset: () => ({}),
   },
 });
 
@@ -53,7 +53,26 @@ export const orderPaySlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    orderPayReset: (state) => (state = {}), // 不要寫成 (state) => {state = {};} !! 寫成這樣會改不到 state，因為我們是要清空 state 而不是更新 state
+    orderPayReset: () => ({}), // 不要寫成 (state) => {state = {};} !! 寫成這樣會改不到 state，因為我們是要清空 state 而不是更新 state
+  },
+});
+
+export const orderDeliverSlice = createSlice({
+  name: 'orderDeliver',
+  initialState: {},
+  reducers: {
+    orderDeliverRequest: (state) => {
+      state.pending = true;
+    },
+    orderDeliverSuccess: (state) => {
+      state.pending = false;
+      state.success = true;
+    },
+    orderDeliverFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+    orderDeliverReset: () => ({}),
   },
 });
 
@@ -75,7 +94,25 @@ export const myOrderListSlice = createSlice({
   },
 });
 
-// Action creaters
+export const orderListSlice = createSlice({
+  name: 'orderList',
+  initialState: { orders: [] },
+  reducers: {
+    orderListRequest: (state) => {
+      state.pending = true;
+    },
+    orderListSuccess: (state, action) => {
+      state.pending = false;
+      state.orders = action.payload;
+    },
+    orderListFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+  },
+});
+
+// 導出 Action creaters
 export const {
   orderCreateRequest,
   orderCreateSuccess,
@@ -88,9 +125,19 @@ export const { orderPayRequest, orderPaySuccess, orderPayFail, orderPayReset } =
   orderPaySlice.actions;
 export const { myOrderListRequest, myOrderListSuccess, myOrderListFail } =
   myOrderListSlice.actions;
+export const { orderListRequest, orderListSuccess, orderListFail } =
+  orderListSlice.actions;
+export const {
+  orderDeliverRequest,
+  orderDeliverSuccess,
+  orderDeliverFail,
+  orderDeliverReset,
+} = orderDeliverSlice.actions;
 
-// reducers
+// 導出 reducers
 export const orderCreateReducer = orderCreateSlice.reducer;
 export const orderDetailsReducer = orderDetailsSlice.reducer;
 export const orderPayReducer = orderPaySlice.reducer;
 export const myOrderListReducer = myOrderListSlice.reducer;
+export const orderListReducer = orderListSlice.reducer;
+export const orderDeliverReducer = orderDeliverSlice.reducer;

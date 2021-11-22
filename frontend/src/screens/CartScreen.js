@@ -158,16 +158,14 @@ const CartScreen = ({ history }) => {
               <p className='fs-5'>總計 : {formatter.format(total)}</p>
             </ListGroupItem>
             <ListGroupItem>
-              <div className='d-grid'>
-                <Button
-                  className='fs-5'
-                  type='button'
-                  disabled={!cartProducts.length}
-                  onClick={checkoutHandler}
-                >
-                  去買單
-                </Button>
-              </div>
+              <Button
+                className='w-100 fs-5'
+                type='button'
+                disabled={!cartProducts.length}
+                onClick={checkoutHandler}
+              >
+                去買單
+              </Button>
             </ListGroupItem>
           </ListGroup>
         </Card>

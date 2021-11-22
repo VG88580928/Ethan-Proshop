@@ -4,6 +4,11 @@ import {
   requestProductDetailsReducer,
 } from './reducers/productReducers';
 // import { cartReducer } from './reducers/cartReducers';
+import {
+  productDeleteReducer,
+  productCreateReducer,
+  productUpdateReducer,
+} from './slices/productSlice';
 import cartReducer from './slices/cartSlice';
 import {
   userLoginReducer,
@@ -19,6 +24,8 @@ import {
   orderDetailsReducer,
   orderPayReducer,
   myOrderListReducer,
+  orderListReducer,
+  orderDeliverReducer,
 } from './slices/orderSlices';
 
 const cartProductsFromLocalStorage = localStorage.getItem('cartProducts')
@@ -56,6 +63,9 @@ const store = configureStore({
   reducer: {
     requestProducts: requestProductsReducer,
     requestProductDetails: requestProductDetailsReducer,
+    productCreate: productCreateReducer,
+    productDelete: productDeleteReducer,
+    productUpdate: productUpdateReducer,
     cart: cartReducer,
     userLogin: userLoginReducer,
     userRegister: userRegisterReducer,
@@ -68,6 +78,8 @@ const store = configureStore({
     orderDetails: orderDetailsReducer,
     orderPay: orderPayReducer,
     myOrderList: myOrderListReducer,
+    orderList: orderListReducer,
+    orderDeliver: orderDeliverReducer,
   },
   preloadedState: initialState, // 這裡放之前的 initialState
 });

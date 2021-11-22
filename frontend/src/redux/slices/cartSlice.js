@@ -15,7 +15,7 @@ export const cartSlice = createSlice({
       const existProduct = state.products.find((e) => e._id === product._id);
 
       if (!existProduct) {
-        state.quantity += 1; // 注意! 這邊是商品總類的數量，不是所有商品的總數
+        state.quantity += 1; // 注意! 這邊是商品總類的數量(有幾樣商品)，不是所有商品的總數
         state.products.push(action.payload);
       } else {
         const index = state.products.indexOf(existProduct); // 如果 existItem 存在，找到該 existItem 的 index，並更新該 existItem 的數量

@@ -88,14 +88,14 @@ const getOrderById = asyncHandler(async (req, res) => {
 // @route: PUT /api/orders/:id/pay
 // @使用權: Private
 const updateOrderToPaid = asyncHandler(async (req, res) => {
-  // 發現此路由的安全性風險: user 可以不經過付款就讓 order 變成 isPaid
+  // FIXME: 發現此路由的安全性風險: user 可以不經過付款就讓 order 變成 isPaid
   const order = await Order.findById(req.params.id);
 
   if (order) {
     order.isPaid = true;
     order.paidAt = Date.now();
+    // paymentResult 存取 Paypal API 回傳的結果
     order.paymentResult = {
-      // paymentResult 存取 Paypal API 回傳的結果
       id: req.body.id,
       status: req.body.status,
       update_time: req.body.update_time,
@@ -111,6 +111,39 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
+// @描述: Update order to delivered (Admin only)
+// @route: PUT /api/orders/:id/deliver
+// @使用權: Private/Admin
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
+
+    // 配送之後更新個別商品庫存
+    for (let item of order.orderItems) {
+      let qty = item.quantity;
+
+      let product = await Product.findById(item._id);
+
+      product.countInStock -= qty;
+
+      // FIXME: 避免庫存變成負值，但這邊不能再用 else 丟錯誤 res 了，因為前面已經丟過 res 了，目前還想不到怎麼丟 error res 會比較好。
+      if (product.countInStock >= 0) {
+        await product.save();
+      }
+    }
+  } else {
+    res.status(404);
+    throw new Error('查無此訂單');
+  }
+});
+
 // @描述: GET logged in user orders
 // @route: GET /api/orders/myorders
 // @使用權: Private
@@ -119,4 +152,19 @@ const getMyOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
-export { addOrderItems, getOrderById, updateOrderToPaid, getMyOrders };
+// @描述: GET all orders (Admin only)
+// @route: GET /api/orders
+// @使用權: Private/Admin
+const getOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({}).populate('user', 'name');
+  res.json(orders);
+});
+
+export {
+  addOrderItems,
+  getOrderById,
+  updateOrderToPaid,
+  getMyOrders,
+  getOrders,
+  updateOrderToDelivered,
+};

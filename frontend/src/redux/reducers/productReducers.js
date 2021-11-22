@@ -1,6 +1,8 @@
 import {
+  REQUEST_PRODUCTS_PENDING,
   REQUEST_PRODUCTS_SUCCESS,
   REQUEST_PRODUCTS_FAIL,
+  REQUEST_PRODUCT_DETAILS_PENDING,
   REQUEST_PRODUCT_DETAILS_SUCCESS,
   REQUEST_PRODUCT_DETAILS_FAIL,
 } from '../constants/productConstants';
@@ -9,8 +11,8 @@ import {
 
 export const requestProductsReducer = (state = { products: [] }, action) => {
   switch (action.type) {
-    // case REQUEST_PRODUCTS_PENDING:
-    //   return { ...state, isPending: true };
+    case REQUEST_PRODUCTS_PENDING:
+      return { ...state, isPending: true };
     case REQUEST_PRODUCTS_SUCCESS:
       return { products: action.payload };
     case REQUEST_PRODUCTS_FAIL:
@@ -25,6 +27,8 @@ export const requestProductDetailsReducer = (
   action
 ) => {
   switch (action.type) {
+    case REQUEST_PRODUCT_DETAILS_PENDING:
+      return { ...state, pending: true };
     case REQUEST_PRODUCT_DETAILS_SUCCESS:
       return { product: action.payload };
     case REQUEST_PRODUCT_DETAILS_FAIL:

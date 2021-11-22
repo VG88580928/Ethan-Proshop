@@ -39,6 +39,7 @@ h3 {
 
 a {
   color: #5e6974;
+  text-decoration: none;
 }
 
 a:hover {
@@ -160,12 +161,6 @@ footer {
     width: 45%;
     margin: 5px 5px;
   }
-}
-
-/* Rating */
-.rating i {
-  color: #ee4d2d;
-  margin: 0.1rem;
 }
 
 /* ProductScreen */

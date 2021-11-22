@@ -1,4 +1,16 @@
 import axios from 'axios';
+import { REQUEST_PRODUCT_DETAILS_SUCCESS } from '../constants/productConstants';
+import {
+  productDeleteRequest,
+  productDeleteSuccess,
+  productDeleteFail,
+  productCreateRequest,
+  productCreateSuccess,
+  productCreateFail,
+  productUpdateRequest,
+  productUpdateSuccess,
+  productUpdateFail,
+} from './productSlice';
 import { addProduct, cartReset } from './cartSlice';
 import {
   loginRequest,
@@ -33,10 +45,112 @@ import {
   orderPayRequest,
   orderPaySuccess,
   orderPayFail,
+  orderDeliverRequest,
+  orderDeliverSuccess,
+  orderDeliverFail,
   myOrderListRequest,
   myOrderListSuccess,
   myOrderListFail,
+  orderListRequest,
+  orderListSuccess,
+  orderListFail,
 } from './orderSlices';
+
+// product
+export const deleteProduct = (productId) => async (dispatch, getState) => {
+  try {
+    dispatch(productDeleteRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.delete(`/api/products/${productId}`, config);
+
+    dispatch(productDeleteSuccess());
+  } catch (error) {
+    dispatch(
+      productDeleteFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const createProduct = (productId) => async (dispatch, getState) => {
+  try {
+    dispatch(productCreateRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(`/api/products`, {}, config);
+
+    dispatch(productCreateSuccess(data));
+  } catch (error) {
+    dispatch(
+      productCreateFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const updateProduct = (product) => async (dispatch, getState) => {
+  try {
+    dispatch(productUpdateRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/products/${product._id}`,
+      product,
+      config
+    );
+
+    dispatch(productUpdateSuccess(data));
+
+    // 記得更新完商品資訊要更新 productDetails，不然當你更新完某商品後，再次回到該商品編輯頁面時，還會是舊的資訊
+    dispatch({
+      type: REQUEST_PRODUCT_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch(
+      productUpdateFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
 
 // cart
 
@@ -287,7 +401,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
     const { data } = await axios.put(`/api/users/${user._id}`, user, config);
 
     dispatch(userUpdateSuccess());
-    dispatch(detailsSuccess(data)); // 改完個人資料後把舊資料更新成新的
+    dispatch(detailsSuccess(data)); // 改完個人資料後把舊資料更新成新的，不然改完後用戶編輯畫面還是舊的資料
   } catch (error) {
     dispatch(
       userUpdateFail(
@@ -395,6 +509,39 @@ export const payOrder =
     }
   };
 
+export const deliverOrder = (orderId) => async (dispatch, getState) => {
+  try {
+    dispatch(orderDeliverRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    // GET req 不需要 Content-Type
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/orders/${orderId}/deliver`,
+      {},
+      config
+    );
+
+    dispatch(orderDeliverSuccess(data));
+  } catch (error) {
+    dispatch(
+      orderDeliverFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
 export const listMyOrders = () => async (dispatch, getState) => {
   try {
     dispatch(myOrderListRequest());
@@ -415,6 +562,34 @@ export const listMyOrders = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch(
       myOrderListFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
+
+export const listOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch(orderListRequest());
+
+    const {
+      userLogin: { userInfo },
+    } = getState(); // 解構語法取得 userInfo 拿 token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get('/api/orders', config);
+
+    dispatch(orderListSuccess(data));
+  } catch (error) {
+    dispatch(
+      orderListFail(
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message

@@ -6,14 +6,21 @@ import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { orderPayReset } from '../redux/slices/orderSlices';
-import { getOrderDetails, payOrder } from '../redux/slices/apiCalls';
+import { orderPayReset, orderDeliverReset } from '../redux/slices/orderSlices';
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from '../redux/slices/apiCalls';
 
 // 把付款放此頁面而不是下單頁面的原因
 // 1. keep user cart items in the server after placing the order
 // 2. track the payment status on our side in the order model after getting results from PayPal.
 
-const OrderScreen = ({ match }) => {
+// 讓 paypal 按鈕留在 admin 畫面原因
+// having PayPal for admin makes sense. at least he knows it works. also maybe the user has an issue with payment and asks the admin to make the payment.
+
+const OrderScreen = ({ match, history }) => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -26,14 +33,26 @@ const OrderScreen = ({ match }) => {
 
   const dispatch = useDispatch();
 
+  const { userInfo } = useSelector((state) => state.userLogin);
+
   const { order, pending, error } = useSelector((state) => state.orderDetails);
 
   // pending 會和上面的重複命名，解構語法改命名成 pendingPay
-  const { pending: pendingPay, success } = useSelector(
+  const { pending: pendingPay, success: successPay } = useSelector(
     (state) => state.orderPay
   );
 
+  const {
+    pending: pendingDeliver,
+    success: successDeliver,
+    error: errorDeliver,
+  } = useSelector((state) => state.orderDeliver);
+
   useEffect(() => {
+    if (!userInfo) {
+      history.push('/login');
+    }
+
     const addPaypalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal');
 
@@ -52,8 +71,9 @@ const OrderScreen = ({ match }) => {
     };
 
     // 還沒拿到 order 時發送請求 & 付款成功後也發送請求更新成付款成功頁面 & 當 order._id !== orderId 時也要更新頁面(也就是在切換不同訂單頁面時)，否則顯示的訂單都會是第一筆訂單的資料
-    if (!order || success || order._id !== orderId) {
+    if (!order || successPay || order._id !== orderId || successDeliver) {
       dispatch(orderPayReset()); // 防止迴圈發生，不然 success 一直保持在 true 就會一直觸發 getOrderDetails()
+      dispatch(orderDeliverReset());
       dispatch(getOrderDetails(orderId));
       // 已拿到 order 但尚未付款時，載入 paypal script，載入後 window 底下會生成 paypal 物件
     } else if (!order.isPaid) {
@@ -63,11 +83,15 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, order, success, orderId]);
+  }, [dispatch, history, userInfo, order, successPay, successDeliver, orderId]);
 
   const successPaymentHandler = (paymentResult) => {
     // paymentResult 是成功付款後 paypal 生成的結果
     dispatch(payOrder(orderId, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(orderId));
   };
 
   return pending ? (
@@ -206,6 +230,25 @@ const OrderScreen = ({ match }) => {
                   )}
                 </ListGroup.Item>
               )}
+
+              {errorDeliver && (
+                <Message variant='danger'>{errorDeliver}</Message>
+              )}
+              {pendingDeliver && <Loader loaderType2 />}
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                !order.isDelivered && (
+                  <ListGroup.Item>
+                    <Button
+                      className='w-100 fs-5'
+                      type='button'
+                      onClick={deliverHandler}
+                    >
+                      標記為已配送
+                    </Button>
+                  </ListGroup.Item>
+                )}
             </ListGroup>
           </Card>
         </Col>

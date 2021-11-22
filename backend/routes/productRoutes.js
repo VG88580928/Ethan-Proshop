@@ -2,14 +2,26 @@ import express from 'express';
 import {
   getProducts,
   getProductById,
+  deleteProduct,
+  createProduct,
+  updateProduct,
 } from '../controllers/productController.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router(); //creates a new router object
 
 // Router-level middleware
 
-router.route('/').get(getProducts); // 等同於 router.get('/', getProducts) (差異於最底下補充),還有 getProducts 其實等同於 (req,res) => {getProducts(req,res)},因為 dependency injection,req & res 被自動帶入
-router.route('/:id').get(getProductById);
+router
+  .route('/')
+  .get(getProducts) // 等同於 router.get('/', getProducts) (差異於最底下補充),還有 getProducts 其實等同於 (req,res) => {getProducts(req,res)},因為 dependency injection,req & res 被自動帶入
+  .post(protect, admin, createProduct);
+
+router
+  .route('/:id')
+  .get(getProductById)
+  .delete(protect, admin, deleteProduct)
+  .put(protect, admin, updateProduct);
 
 export default router;
 

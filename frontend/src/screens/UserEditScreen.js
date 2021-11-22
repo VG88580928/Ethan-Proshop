@@ -25,6 +25,8 @@ const UserEditScreen = ({ match, history }) => {
   } = useSelector((state) => state.userUpdate);
 
   useEffect(() => {
+    // 這頁面可以不用擋沒登入的人沒關西，因為沒 token 也拿不到用戶資訊，頁面也會報錯
+
     if (successUpdate) {
       dispatch(userUpdateReset());
       history.push('/admin/userlist');

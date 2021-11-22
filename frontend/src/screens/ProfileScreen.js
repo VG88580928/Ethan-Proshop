@@ -143,7 +143,7 @@ const ProfileScreen = ({ location, history }) => {
                 <th>創建</th>
                 <th>金額</th>
                 <th>付款</th>
-                <th>運送</th>
+                <th>配送</th>
                 <th></th>
               </tr>
             </thead>
@@ -162,7 +162,7 @@ const ProfileScreen = ({ location, history }) => {
                   </td>
                   <td>
                     {order.isDelivered ? (
-                      `${order.deliveredAt.substring(0, 10)} 抵達`
+                      `${order.deliveredAt.substring(0, 10)}`
                     ) : (
                       <i className='fas fa-times' style={{ color: 'red' }}></i>
                     )}
