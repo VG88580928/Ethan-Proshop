@@ -5,7 +5,7 @@ import Product from '../models/productModel.js';
 // @route: GET /api/products
 // @使用權: Public
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({}); // 找到所有商品
+  const products = await Product.find({}); // 找到所有商品   也可以直接 find()
 
   // 如果想要新加入的商品加到首頁最前面，可以在 res 之前 sort 這個 products array
   // const sortedProducts = products.sort((a, b) => new Date(b.createdAt).getTime()  - new Date(a.createdAt).getTime())
@@ -94,10 +94,56 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// @描述: CREATE new review
+// @route: POST /api/products/:id/reviews
+// @使用權: Private
+const createProductReview = asyncHandler(async (req, res) => {
+  const { rating, comment } = req.body;
+
+  const product = await Product.findById(req.params.id);
+
+  // TODO: 之後考慮使用跟蝦皮類似的做法，讓只有曾經買過該商品(且商品已付費且交付完成)的用戶評論
+
+  if (product) {
+    // find() 有找到就回傳該 element，沒有回傳 undefined
+    const alreadyReviewed = product.reviews.find(
+      // ObjectId 不能直接做比較(物件有 ref 問題) toString() 參考: https://docs.mongodb.com/manual/reference/method/ObjectId.toString/
+      (review) => review.user.toString() === req.user._id.toString()
+    );
+
+    if (alreadyReviewed) {
+      res.status(400);
+      throw new Error('該產品已經評論過囉!');
+    } else {
+      const review = {
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+        user: req.user._id,
+      };
+
+      product.reviews.push(review);
+
+      product.numReviews = product.reviews.length; // 可以順便讓原本的假資料變成正確的評價人數
+
+      product.rating =
+        product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        product.numReviews;
+
+      await product.save();
+      res.status(201).json({ message: '評論成功!' });
+    }
+  } else {
+    res.status(404);
+    throw new Error('查無此商品');
+  }
+});
+
 export {
   getProducts,
   getProductById,
   deleteProduct,
   createProduct,
   updateProduct,
+  createProductReview,
 }; // 注意別不小心習慣加 const XD

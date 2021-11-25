@@ -8,6 +8,7 @@ import {
   productDeleteReducer,
   productCreateReducer,
   productUpdateReducer,
+  productReviewCreateReducer,
 } from './slices/productSlice';
 import cartReducer from './slices/cartSlice';
 import {
@@ -66,6 +67,7 @@ const store = configureStore({
     productCreate: productCreateReducer,
     productDelete: productDeleteReducer,
     productUpdate: productUpdateReducer,
+    productReviewCreate: productReviewCreateReducer,
     cart: cartReducer,
     userLogin: userLoginReducer,
     userRegister: userRegisterReducer,

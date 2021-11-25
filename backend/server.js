@@ -4,6 +4,7 @@ import path from 'path';
 import pkg from 'cloudinary';
 import express from 'express';
 import dotenv from 'dotenv'; //此套件可以在 .env 檔裡方便集中管理環境變數，分離敏感資訊，也避免變數不小心被共用到。
+import morgan from 'morgan'; // 可以在接收 req 時在終端顯示 req 資訊，以及 res 狀態等等
 import connectDB from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 // Routes
@@ -20,6 +21,10 @@ const cloudinary = pkg; // cloudinary 不支援 es6 modules，所以需要多一
 connectDB(); // 連結 DB
 
 const app = express();
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 app.use(express.json()); // body parser => 讓 server 可以接收 req.body 內的 JSON data
 

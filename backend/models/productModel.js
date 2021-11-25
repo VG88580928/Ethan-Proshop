@@ -17,6 +17,12 @@ const reviewSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    // 這裡為了知道評論是哪個用戶留的，我們就可以利用這個用戶 ID 來禁止該用戶重複留言。
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
   },
   {
     timestamps: true,
@@ -26,7 +32,7 @@ const reviewSchema = mongoose.Schema(
 const productSchema = mongoose.Schema(
   {
     // 由於只有 admin 可以創建商品，建立 user 是為了知道哪個 admin 創建了哪個商品，這邊用 ref
-    // 讓  product schema 連結 User schema，引用了 User schema 的 id，refs 允許數據填充。
+    // 讓  product schema 連結 User schema，引用了 User schema 的 id，ref 允許數據填充。
     // 因此我們不僅可以在查詢中獲取 'ref' 的 objectid，也可以取得該 'ref' 所屬的整個 document。
     user: {
       type: mongoose.Schema.Types.ObjectId,

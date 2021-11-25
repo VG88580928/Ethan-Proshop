@@ -55,7 +55,26 @@ export const productUpdateSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
-    productUpdateReset: () => ({ product: {} }), // 如果想清空 state 又想保留 initialState 的寫法 (其實這邊目前用不到 product 資訊，寫來練習而已)
+    productUpdateReset: () => ({ product: {} }), // 如果想清空 state 又想保留 initialState 的寫法 (其實這邊目前用不到 product 資訊，寫來練習而已，但也許未來會用到)
+  },
+});
+
+export const productReviewCreateSlice = createSlice({
+  name: 'productReviewCreate',
+  initialState: {},
+  reducers: {
+    productReviewCreateRequest: (state) => {
+      state.pending = true;
+    },
+    productReviewCreateSuccess: (state) => {
+      state.pending = false;
+      state.success = true;
+    },
+    productReviewCreateFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+    productReviewCreateReset: () => ({}),
   },
 });
 
@@ -75,6 +94,13 @@ export const {
 } = productCreateSlice.actions;
 
 export const {
+  productReviewCreateRequest,
+  productReviewCreateSuccess,
+  productReviewCreateFail,
+  productReviewCreateReset,
+} = productReviewCreateSlice.actions;
+
+export const {
   productUpdateRequest,
   productUpdateSuccess,
   productUpdateFail,
@@ -85,3 +111,4 @@ export const {
 export const productDeleteReducer = productDeleteSlice.reducer;
 export const productCreateReducer = productCreateSlice.reducer;
 export const productUpdateReducer = productUpdateSlice.reducer;
+export const productReviewCreateReducer = productReviewCreateSlice.reducer;

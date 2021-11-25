@@ -10,6 +10,10 @@ import {
   productUpdateRequest,
   productUpdateSuccess,
   productUpdateFail,
+  productReviewCreateRequest,
+  productReviewCreateSuccess,
+  productReviewCreateFail,
+  productReviewCreateReset,
 } from './productSlice';
 import { addProduct, cartReset } from './cartSlice';
 import {
@@ -151,6 +155,36 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     );
   }
 };
+
+export const creatProductReview =
+  (productId, review) => async (dispatch, getState) => {
+    try {
+      dispatch(productReviewCreateRequest());
+
+      const {
+        userLogin: { userInfo },
+      } = getState(); // 解構語法取得 userInfo 拿 token
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      await axios.post(`/api/products/${productId}/reviews`, review, config);
+
+      dispatch(productReviewCreateSuccess());
+    } catch (error) {
+      dispatch(
+        productReviewCreateFail(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
+    }
+  };
 
 // cart
 

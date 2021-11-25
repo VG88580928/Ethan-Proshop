@@ -5,6 +5,7 @@ import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { requestProducts } from '../redux/actions/productActions';
+import { productReviewCreateReset } from '../redux/slices/productSlice';
 
 const HomeScreen = () => {
   const [value, setValue] = useState('所有商品');
@@ -19,6 +20,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     dispatch(requestProducts());
+    dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 state error 還留在那。
   }, [dispatch]);
 
   const changeValue = (e) => {

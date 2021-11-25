@@ -76,6 +76,8 @@ const getOrderById = asyncHandler(async (req, res) => {
   // 確認存在訂單且用戶要馬是 admin，要馬是一般用戶，否則不回傳訂單
   // 這邊檢查訂單是否為該用戶時如果寫 order.user._id === req.user._id 會不如預期(因為我們比較的是 ObjectID，用 == or === 比較物件會有 reference 問題)
   // 解法參考: https://stackoverflow.com/questions/11060213/mongoose-objectid-comparisons-fail-inconsistently  &&  http://mongodb.github.io/node-mongodb-native/api-bson-generated/objectid.html#equals (equals 方法)
+  // 更新第 2 種解法: 使用 toString()
+  // 參考: https://docs.mongodb.com/manual/reference/method/ObjectId.toString/
   if (order && (req.user.isAdmin || order.user._id.equals(req.user._id))) {
     res.json(order);
   } else {
@@ -133,7 +135,8 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 
       product.countInStock -= qty;
 
-      // FIXME: 避免庫存變成負值，但這邊不能再用 else 丟錯誤 res 了，因為前面已經丟過 res 了，目前還想不到怎麼丟 error res 會比較好。
+      // FIXME: 避免庫存變成負值，但這邊不能再用 else 丟錯誤 res 了，因為前面已經丟過 res 了，目前還想不到怎麼丟 error res 會比較好。(但這功能似乎也沒必要，畢竟賣家要是沒貨 or 貨不夠也不會沒發貨就去按已配送按鈕)
+      // 相同案例: https://stackoverflow.com/questions/65273205/how-can-i-handle-multiple-response-in-single-route
       if (product.countInStock >= 0) {
         await product.save();
       }

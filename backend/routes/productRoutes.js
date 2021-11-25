@@ -5,6 +5,7 @@ import {
   deleteProduct,
   createProduct,
   updateProduct,
+  createProductReview,
 } from '../controllers/productController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -16,7 +17,7 @@ router
   .route('/')
   .get(getProducts) // 等同於 router.get('/', getProducts) (差異於最底下補充),還有 getProducts 其實等同於 (req,res) => {getProducts(req,res)},因為 dependency injection,req & res 被自動帶入
   .post(protect, admin, createProduct);
-
+router.route('/:id/reviews').post(protect, createProductReview);
 router
   .route('/:id')
   .get(getProductById)

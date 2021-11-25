@@ -23,7 +23,7 @@ export const requestProductsReducer = (state = { products: [] }, action) => {
 };
 
 export const requestProductDetailsReducer = (
-  state = { product: { reviews: [] } },
+  state = { product: { reviews: [] } }, // 這個初始 reviews: [] 要記得加，否則在 ProductScreen 遇到 product.reviews.length === 0 這條條件句時就會噴錯誤(Cannot read property 'length' of undefined)
   action
 ) => {
   switch (action.type) {
