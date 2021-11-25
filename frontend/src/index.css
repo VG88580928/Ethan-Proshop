@@ -50,6 +50,12 @@ a:hover {
   pointer-events: none;
   opacity: 0.65;
 }
+
+/* 這邊為了消掉 html datalist hover 時默認的箭頭 */
+input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
 /* Header */
 header.fixed-top {
   position: fixed;
@@ -101,6 +107,15 @@ header .navbar .nav-link {
   font-size: 1rem;
 }
 
+header .search-icon {
+  font-size: 18px;
+}
+
+@media (max-width: 991.98px) {
+  header form {
+    margin: 10px 0;
+  }
+}
 /* Footer */
 footer {
   display: flex;
@@ -140,7 +155,7 @@ footer {
   top: 70px;
 }
 
-@media (min-width: 520px) and (max-width: 991px) {
+@media (min-width: 520px) and (max-width: 991.98px) {
   .category > div {
     display: flex;
     margin-bottom: 20px;
@@ -151,7 +166,7 @@ footer {
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 519.98px) {
   .category > div {
     display: flex;
     flex-wrap: wrap;
@@ -201,7 +216,7 @@ footer {
   margin-bottom: 10px;
 }
 
-@media only screen and (min-width: 768px) and (max-width: 1200px) {
+@media only screen and (min-width: 768px) and (max-width: 1199.98px) {
   .product-screen-section {
     min-width: 350px;
   }
@@ -238,7 +253,7 @@ footer {
   padding: 0;
 }
 
-@media (min-width: 768px) and (max-width: 992px) {
+@media (min-width: 768px) and (max-width: 991.98px) {
   /* Gutters 是介於欄位之間的間隙，這裡為了讓刪除紐不要跑版 */
   .cart-screen .row {
     --bs-gutter-x: 0.5rem;

@@ -7,8 +7,10 @@ import Message from '../components/Message';
 import { requestProducts } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 
-const HomeScreen = () => {
+const HomeScreen = ({ match }) => {
   const [value, setValue] = useState('所有商品');
+
+  const keyword = match.params.keyword;
 
   const divRef = useRef();
 
@@ -19,9 +21,9 @@ const HomeScreen = () => {
   const { products, error } = productList;
 
   useEffect(() => {
-    dispatch(requestProducts());
-    dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 state error 還留在那。
-  }, [dispatch]);
+    dispatch(requestProducts(keyword));
+    dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 error state 還留在那。
+  }, [dispatch, keyword]);
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，

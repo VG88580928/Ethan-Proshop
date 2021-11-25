@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { logout, userLogout } from '../redux/slices/userSlices';
 import { cartReset } from '../redux/slices/cartSlice';
+import SearchBox from './SearchBox';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Header = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
+            <SearchBox />
             <Nav className='ms-auto'>
               <Nav.Link as={NavLink} to='/cart' className='cart-link'>
                 <i className='fas fa-shopping-cart fs-6'></i>

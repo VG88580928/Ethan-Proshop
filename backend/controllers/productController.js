@@ -5,13 +5,31 @@ import Product from '../models/productModel.js';
 // @route: GET /api/products
 // @使用權: Public
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({}); // 找到所有商品   也可以直接 find()
+  // req.query.keyword: 拿到 url 後面 ?keyword=value 中的 value，$regex: req.query.keyword => 找到名字包含 req.query.keyword 字串的商品，$options:'i' => 不區分大小寫
+  // 來源: https://docs.mongodb.com/manual/reference/operator/query/regex/
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const products = await Product.find({ ...keyword }); // 找到所有商品   也可以直接 find()
 
   // 如果想要新加入的商品加到首頁最前面，可以在 res 之前 sort 這個 products array
   // const sortedProducts = products.sort((a, b) => new Date(b.createdAt).getTime()  - new Date(a.createdAt).getTime())
   // 參考: https://stackoverflow.com/questions/56612302/sort-array-by-date-in-javascript
 
-  res.json(products); // 轉為 json 格式作為 response 送出
+  console.log(products);
+  if (products.length) {
+    res.json(products); // 轉為 json 格式作為 response 送出
+  } else {
+    // 沒找到時 product 回傳 []，所以條件句記得加上 .length，否則永遠不會丟 error 出去 ([] Boolean 為 true)
+    res.status(404);
+    throw new Error('查無商品');
+  }
 });
 
 // @描述: 獲取單一商品
@@ -23,6 +41,7 @@ const getProductById = asyncHandler(async (req, res) => {
   if (product) {
     res.json(product);
   } else {
+    // 沒找到時 product 為 null
     res.status(404);
     throw new Error('查無商品');
   }

@@ -13,7 +13,6 @@ import {
   productReviewCreateRequest,
   productReviewCreateSuccess,
   productReviewCreateFail,
-  productReviewCreateReset,
 } from './productSlice';
 import { addProduct, cartReset } from './cartSlice';
 import {
