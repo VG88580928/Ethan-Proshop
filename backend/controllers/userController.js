@@ -104,7 +104,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route: GET /api/users
 // @使用權: Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}); // 找到所有商品   也可以直接 find()，意思一樣
+
   res.json(users);
 });
 
@@ -147,8 +148,7 @@ const updateUser = asyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name; // 如果用戶沒改名字就保持原本
     user.email = req.body.email || user.email;
-    user.isAdmin =
-      req.body.isAdmin === undefined ? user.isAdmin : req.body.isAdmin; // 如果 client 端沒傳 isAdmin 回來 (undefined)，就保持原本 (用 undefined 檢查可以讓 管理員>一般用戶 && 一般用戶>管理員 的更改都順利執行)
+    user.isAdmin = req.body.isAdmin ?? user.isAdmin; // 這裡不可以寫成 req.body.isAdmin || user.isAdmin; 這樣的話管理員會沒辦法把其他管理員變回一般用戶(因為 req.body.isAdmin 為 false 時，經過 || 會回傳 user.isAdmin，這樣 user.isAdmin 永遠都會是原本的 true)，所以用 Nullish operator(只擋 null 或 undefined) 改寫，讓左邊可以吃到 false 的值
 
     const updatedUser = await user.save(); // update a document with Mongoose.(save 會自動觸發執行 userSchema.pre 函式加密密碼)
 

@@ -1,30 +1,61 @@
 import asyncHandler from 'express-async-handler'; //讓我們不用一直重複寫 try-catch (Express 5.0 alpha 版本不需要) 原理:https://stackoverflow.com/questions/67404243/how-does-this-asynchandler-function-work(回答二樓)
 import Product from '../models/productModel.js';
 
-// @描述: 獲取所有商品
+// @描述: 獲取所有商品 (因為做了分頁系統後，本來做的搜尋欄 auto-complete 功能爆掉了(只抓的到當前頁面的產品)，因此加開此 api)
+// @route: GET /api/products/all
+// @使用權: Public
+const getAllProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find();
+  res.json(products);
+});
+
+// @描述: 獲取所有商品 (有分頁系統)
 // @route: GET /api/products
 // @使用權: Public
 const getProducts = asyncHandler(async (req, res) => {
+  const pageSize = 2;
+  const page = Number(req.query.pageNumber) || 1;
+
   // req.query.keyword: 拿到 url 後面 ?keyword=value 中的 value，$regex: req.query.keyword => 找到名字包含 req.query.keyword 字串的商品，$options:'i' => 不區分大小寫
   // 來源: https://docs.mongodb.com/manual/reference/operator/query/regex/
+
+  // &or 滿足任一就回傳
+  // 來源: https://docs.mongodb.com/manual/reference/operator/query/or/#op._S_or
   const keyword = req.query.keyword
     ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
+        $or: [
+          {
+            name: {
+              $regex: req.query.keyword,
+              $options: 'i',
+            },
+          },
+          {
+            category: {
+              $regex: req.query.keyword,
+              $options: 'i',
+            },
+          },
+        ],
       }
     : {};
 
-  const products = await Product.find({ ...keyword }); // 找到所有商品   也可以直接 find()
+  // 要是有接收到 req.query.keyword，keyword 會長得像這樣 { '$or': [ { name: [Object] }, { category: [Object] } ] }，裡面裝有 filter 的條件(品名，種類等是否符合)
+
+  const count = await Product.countDocuments({ ...keyword }); // countDocuments(): 符合這個 filter 條件的 documents 數量 (https://docs.mongodb.com/manual/reference/method/db.collection.countDocuments/)
+
+  // 假設今天我搜尋 a，搜尋到 10 個符合的 document(Product.find({ ...keyword }) 找到 10 個商品，上面的 count = 10)，而我今天在商品第三頁(page = 3)，假設 pageSize = 2，我會希望我只在畫面上看到 2 個商品 (limit(2) => 限制最多只回傳 2 個 document)，
+  // 而這兩個商品我希望看到 10 個符合商品裡的 '第 5 個 & 第 6 個' 商品，所以我應該跳過前 4 個商品(skip(pageSize * (page -1) = skip(4))，因此最後回傳 '第 5 個 & 第 6 個' 商品'。
+  const products = await Product.find({ ...keyword }) // db.collection.find method returns a cursor
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
 
   // 如果想要新加入的商品加到首頁最前面，可以在 res 之前 sort 這個 products array
   // const sortedProducts = products.sort((a, b) => new Date(b.createdAt).getTime()  - new Date(a.createdAt).getTime())
   // 參考: https://stackoverflow.com/questions/56612302/sort-array-by-date-in-javascript
 
-  console.log(products);
   if (products.length) {
-    res.json(products); // 轉為 json 格式作為 response 送出
+    res.json({ products, page, pages: Math.ceil(count / pageSize) }); // 轉為 json 格式作為 response 送出 (pages 為總頁數)
   } else {
     // 沒找到時 product 回傳 []，所以條件句記得加上 .length，否則永遠不會丟 error 出去 ([] Boolean 為 true)
     res.status(404);
@@ -159,6 +190,7 @@ const createProductReview = asyncHandler(async (req, res) => {
 });
 
 export {
+  getAllProducts,
   getProducts,
   getProductById,
   deleteProduct,

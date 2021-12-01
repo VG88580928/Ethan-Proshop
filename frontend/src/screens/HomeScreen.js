@@ -4,26 +4,29 @@ import { Col, Row, Card } from 'react-bootstrap';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Paginate from '../components/Paginate';
 import { requestProducts } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 
-const HomeScreen = ({ match }) => {
+const HomeScreen = ({ history, match }) => {
   const [value, setValue] = useState('所有商品');
 
   const keyword = match.params.keyword;
+
+  const pageNumber = match.params.pageNumber || 1;
 
   const divRef = useRef();
 
   const dispatch = useDispatch();
 
-  const productList = useSelector((state) => state.requestProducts);
-
-  const { products, error } = productList;
+  const { products, isPending, page, pages, error } = useSelector(
+    (state) => state.requestProducts
+  );
 
   useEffect(() => {
-    dispatch(requestProducts(keyword));
+    dispatch(requestProducts(keyword, pageNumber));
     dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 error state 還留在那。
-  }, [dispatch, keyword]);
+  }, [dispatch, keyword, pageNumber]);
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
@@ -41,11 +44,16 @@ const HomeScreen = ({ match }) => {
     }
   };
 
+  const filteredProductsByCategory = (e) => {
+    const category = e.target.textContent;
+    history.push(`/search/${category}`);
+  };
+
   return (
     <Row className='pt-5'>
       {/* 原本用 isPending 的 Boolean 值做 Loading,但發現進商品頁面後再回到主頁又會重複跑 Loading,個人覺得沒有必要做多餘的 Loading 畫面(因為商品早在第一次進網站時就載入完了)
-      ，因此刪除 isPending 改用 products.length 做動態渲染來增加 UX(使用者體驗)*/}
-      {products.length === 0 && !error ? (
+      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，所以又改回來了 */}
+      {isPending ? (
         <Loader />
       ) : error ? (
         <Message variant='danger'>{error}</Message>
@@ -60,10 +68,10 @@ const HomeScreen = ({ match }) => {
                 active(e);
               }}
             >
-              <Card>所有商品</Card>
-              <Card>手機類</Card>
-              <Card>耳機類</Card>
-              <Card>遊戲類</Card>
+              <Card onClick={() => history.push('/')}>所有商品</Card>
+              <Card onClick={filteredProductsByCategory}>手機類</Card>
+              <Card onClick={filteredProductsByCategory}>耳機類</Card>
+              <Card onClick={filteredProductsByCategory}>遊戲類</Card>
             </div>
           </Col>
           <Col as='section' lg={10}>
@@ -84,7 +92,8 @@ const HomeScreen = ({ match }) => {
                 </Col>
               ))}
             </Row>
-          </Col>{' '}
+            <Paginate pages={pages} page={page} />
+          </Col>
         </>
       )}
     </Row>

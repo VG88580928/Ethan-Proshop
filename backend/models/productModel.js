@@ -90,6 +90,6 @@ const productSchema = mongoose.Schema(
 
 // model() 把 Schema 編譯成 Model，Model 可以用來創建以及操作 Mongo 的 collections
 // (此處創建名為 products 的 collection)
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', productSchema); // （參數 1：欲創建的 collection 名稱 / 參數 2：欲使用的 Schema）
 
 export default Product;

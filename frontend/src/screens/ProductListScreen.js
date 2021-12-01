@@ -4,6 +4,7 @@ import { Table, Button, Modal, Row, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Paginate from '../components/Paginate';
 import { requestProducts } from '../redux/actions/productActions';
 import {
   productCreateReset,
@@ -16,11 +17,13 @@ const ProductListScreen = ({ history, match }) => {
   const [status, setStatus] = useState('所有商品');
   const [filterdProducts, setFilterdProducts] = useState([]);
 
+  const pageNumber = match.params.pageNumber || 1;
+
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.userLogin);
 
-  const { products, error, isPending } = useSelector(
+  const { products, error, isPending, pages, page } = useSelector(
     (state) => state.requestProducts
   );
 
@@ -53,7 +56,7 @@ const ProductListScreen = ({ history, match }) => {
   useEffect(() => {
     dispatch(productCreateReset());
     dispatch(productDeleteReset()); // 這邊也要記得 reset,不然連續刪兩個 product,第二次刪畫面不會更新
-    dispatch(requestProducts());
+    dispatch(requestProducts('', pageNumber));
 
     if (!userInfo || !userInfo.isAdmin) {
       history.push('/login');
@@ -69,6 +72,7 @@ const ProductListScreen = ({ history, match }) => {
     successDelete,
     successCreate,
     createdProduct,
+    pageNumber,
   ]);
 
   useEffect(() => {
@@ -115,64 +119,67 @@ const ProductListScreen = ({ history, match }) => {
       ) : error ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <Table responsive hover>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>名稱</th>
-              <th>價格</th>
-              <th>種類</th>
-              <th>品牌</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filterdProducts.map((product) => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>${product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td>
-                  <Button
-                    className='me-2'
-                    variant='dark'
-                    as={NavLink}
-                    to={`/admin/product/${product._id}/edit`}
-                  >
-                    <i className='fas fa-edit'></i>
-                  </Button>
-                  <Button variant='danger' onClick={showModalHandler}>
-                    <i className='fas fa-trash'></i>
-                  </Button>
-
-                  <Modal show={showModal} onHide={closeModalHandler}>
-                    <Modal.Body>確定要刪除此商品嗎?</Modal.Body>
-                    <Modal.Footer>
-                      <Button
-                        className='fs-5'
-                        variant='secondary'
-                        onClick={closeModalHandler}
-                      >
-                        取消
-                      </Button>
-                      <Button
-                        className='fs-5'
-                        variant='primary'
-                        onClick={() => {
-                          deleteHandler(product._id);
-                          closeModalHandler();
-                        }}
-                      >
-                        刪除
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                </td>
+        <>
+          <Table responsive hover>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>名稱</th>
+                <th>價格</th>
+                <th>種類</th>
+                <th>品牌</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {filterdProducts.map((product) => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>${product.price}</td>
+                  <td>{product.category}</td>
+                  <td>{product.brand}</td>
+                  <td>
+                    <Button
+                      className='me-2'
+                      variant='dark'
+                      as={NavLink}
+                      to={`/admin/product/${product._id}/edit`}
+                    >
+                      <i className='fas fa-edit'></i>
+                    </Button>
+                    <Button variant='danger' onClick={showModalHandler}>
+                      <i className='fas fa-trash'></i>
+                    </Button>
+
+                    <Modal show={showModal} onHide={closeModalHandler}>
+                      <Modal.Body>確定要刪除此商品嗎?</Modal.Body>
+                      <Modal.Footer>
+                        <Button
+                          className='fs-5'
+                          variant='secondary'
+                          onClick={closeModalHandler}
+                        >
+                          取消
+                        </Button>
+                        <Button
+                          className='fs-5'
+                          variant='primary'
+                          onClick={() => {
+                            deleteHandler(product._id);
+                            closeModalHandler();
+                          }}
+                        >
+                          刪除
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Paginate pages={pages} page={page} />
+        </>
       )}
     </div>
   );

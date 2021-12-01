@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 const Rating = ({ value, text, color, margin }) => {
   return (
@@ -32,8 +32,8 @@ Rating.defaultProps = {
 
 // propTypes 是 React 內置的型別檢查功能，可定義類型，值是否需要等等，寫錯型別會幫我們跳警告再 console 上。(屬性 p 是小寫)
 // propTypes 僅在開發模式下檢查，不影響效能。
-Rating.propTypes = {
-  text: PropTypes.string.isRequired,
-};
+// Rating.propTypes = {
+//   text: PropTypes.string.isRequired, // 因為後來同頁面做了評論功能所以取消此限制，不然評論區沒有 '?人評論'的字串 console 會噴警告
+// };
 
 export default Rating;

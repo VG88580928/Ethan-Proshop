@@ -27,7 +27,14 @@ const App = () => {
         <Container>
           {/* 由於 Route path='/' 表示 / 後面亂打默認都會到 HomeScreen，所以用 exact 避免這個默認行為(如果不想用 exact 也可以用 <Switch> 包在外面) */}
           <Route path='/' component={HomeScreen} exact />
-          <Route path='/search/:keyword' component={HomeScreen} />
+          <Route path='/search/:keyword' component={HomeScreen} exact />
+          {/* 搜尋且商品超過一頁時使用 */}
+          <Route
+            path='/search/:keyword/page/:pageNumber'
+            component={HomeScreen}
+            exact
+          />
+          <Route path='/page/:pageNumber' component={HomeScreen} exact />
           <Route path='/product/:id' component={ProductScreen} />
           {/* id 後的 ? 表示 id 是選擇性的(可有可無)，這樣我們從右上角點購物車時才進的到購物車畫面 <-- 舊寫法，我的 cart 不接 id 了，看看就好 xd */}
           <Route path='/cart/:id?' component={CartScreen} />
@@ -40,7 +47,16 @@ const App = () => {
           <Route path='/order/:id' component={OrderScreen} />
           <Route path='/admin/userlist' component={UserListScreen} />
           <Route path='/admin/user/:id/edit' component={UserEditScreen} />
-          <Route path='/admin/productlist' component={ProductListScreen} />
+          <Route
+            path='/admin/productlist'
+            component={ProductListScreen}
+            exact
+          />
+          <Route
+            path='/admin/productlist/page/:pageNumber'
+            component={ProductListScreen}
+            exact
+          />
           <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
           <Route path='/admin/orderlist' component={OrderListScreen} />
         </Container>

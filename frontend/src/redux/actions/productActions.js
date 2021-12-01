@@ -10,12 +10,15 @@ import {
 
 // 有了 thunk middleware，就能在 function 中間 dispatch 了
 export const requestProducts =
-  (keyword = '') =>
+  (keyword = '', pageNumber = '') =>
   async (dispatch) => {
     try {
       dispatch({ type: REQUEST_PRODUCTS_PENDING });
 
-      const { data } = await axios.get(`/api/products?keyword=${keyword}`); // axios 會自動轉換json，所以不用像 fetch API 需要多一步 const data = await res.json()
+      // axios 會自動轉換json，所以不用像 fetch API 需要多一步 const data = await res.json()
+      const { data } = await axios.get(
+        `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+      );
 
       dispatch({
         type: REQUEST_PRODUCTS_SUCCESS,

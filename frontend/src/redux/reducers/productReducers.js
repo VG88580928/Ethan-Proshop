@@ -14,9 +14,18 @@ export const requestProductsReducer = (state = { products: [] }, action) => {
     case REQUEST_PRODUCTS_PENDING:
       return { ...state, isPending: true };
     case REQUEST_PRODUCTS_SUCCESS:
-      return { products: action.payload };
+      return {
+        isPending: false,
+        products: action.payload.products,
+        pages: action.payload.pages,
+        page: action.payload.page,
+      };
     case REQUEST_PRODUCTS_FAIL:
-      return { ...state, error: action.payload };
+      return {
+        ...state,
+        isPending: false,
+        error: action.payload,
+      };
     default:
       return state;
   }
@@ -30,9 +39,9 @@ export const requestProductDetailsReducer = (
     case REQUEST_PRODUCT_DETAILS_PENDING:
       return { ...state, pending: true };
     case REQUEST_PRODUCT_DETAILS_SUCCESS:
-      return { product: action.payload };
+      return { pending: false, product: action.payload };
     case REQUEST_PRODUCT_DETAILS_FAIL:
-      return { ...state, error: action.payload };
+      return { ...state, pending: false, error: action.payload };
     default:
       return state;
   }
