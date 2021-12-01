@@ -15,6 +15,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 const getProducts = asyncHandler(async (req, res) => {
   const pageSize = 2;
   const page = Number(req.query.pageNumber) || 1;
+  const sortBy = req.query.sort_by || '';
 
   // req.query.keyword: 拿到 url 後面 ?keyword=value 中的 value，$regex: req.query.keyword => 找到名字包含 req.query.keyword 字串的商品，$options:'i' => 不區分大小寫
   // 來源: https://docs.mongodb.com/manual/reference/operator/query/regex/
@@ -40,19 +41,29 @@ const getProducts = asyncHandler(async (req, res) => {
       }
     : {};
 
+  // https://stackoverflow.com/questions/4299991/how-to-sort-in-mongoose
+  const sortProducts =
+    sortBy === 'price-ascending'
+      ? { price: 1 } // 價格高到低
+      : sortBy === 'price-descending'
+      ? { price: -1 } // 價格低到高
+      : { _id: -1 }; // _id: -1 表示商品從新到舊
+
   // 要是有接收到 req.query.keyword，keyword 會長得像這樣 { '$or': [ { name: [Object] }, { category: [Object] } ] }，裡面裝有 filter 的條件(品名，種類等是否符合)
 
-  const count = await Product.countDocuments({ ...keyword }); // countDocuments(): 符合這個 filter 條件的 documents 數量 (https://docs.mongodb.com/manual/reference/method/db.collection.countDocuments/)
+  let count = await Product.countDocuments({ ...keyword }); // countDocuments(): 符合這個 filter 條件的 documents 數量 (https://docs.mongodb.com/manual/reference/method/db.collection.countDocuments/)
 
   // 假設今天我搜尋 a，搜尋到 10 個符合的 document(Product.find({ ...keyword }) 找到 10 個商品，上面的 count = 10)，而我今天在商品第三頁(page = 3)，假設 pageSize = 2，我會希望我只在畫面上看到 2 個商品 (limit(2) => 限制最多只回傳 2 個 document)，
   // 而這兩個商品我希望看到 10 個符合商品裡的 '第 5 個 & 第 6 個' 商品，所以我應該跳過前 4 個商品(skip(pageSize * (page -1) = skip(4))，因此最後回傳 '第 5 個 & 第 6 個' 商品'。
-  const products = await Product.find({ ...keyword }) // db.collection.find method returns a cursor
+  const products = await Product.find({ ...keyword }) // db.collection.find method returns a cursor 注意不能寫 await，會出錯(因為變成回傳商品 Array，之後執行 limit() 就會報錯了)
+    .sort(sortProducts)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
   // 如果想要新加入的商品加到首頁最前面，可以在 res 之前 sort 這個 products array
   // const sortedProducts = products.sort((a, b) => new Date(b.createdAt).getTime()  - new Date(a.createdAt).getTime())
   // 參考: https://stackoverflow.com/questions/56612302/sort-array-by-date-in-javascript
+  // 發現更好的方法了，用 _id 來 sort 就好了
 
   if (products.length) {
     res.json({ products, page, pages: Math.ceil(count / pageSize) }); // 轉為 json 格式作為 response 送出 (pages 為總頁數)

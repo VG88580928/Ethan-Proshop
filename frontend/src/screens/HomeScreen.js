@@ -8,12 +8,16 @@ import Paginate from '../components/Paginate';
 import { requestProducts } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 
-const HomeScreen = ({ history, match }) => {
+const HomeScreen = ({ history, match, location }) => {
   const [value, setValue] = useState('所有商品');
+
+  const path = location.pathname; // 取得 url 的 pathname 部分
 
   const keyword = match.params.keyword;
 
   const pageNumber = match.params.pageNumber || 1;
+
+  const sortBy = location.search ? location.search.split('=')[1] : '';
 
   const divRef = useRef();
 
@@ -23,10 +27,29 @@ const HomeScreen = ({ history, match }) => {
     (state) => state.requestProducts
   );
 
+  // const filterdProductsHandler = () => {
+  //   switch (status) {
+  //     case '價格: 低到高':
+  //       history.push(`${path}?sort_by=price-ascending`);
+  //       dispatch(requestProducts(keyword, '', 'price-ascending'));
+  //       break;
+  //     case '價格: 高到低':
+  //       history.push(`${path}?sort_by=price-descending`);
+  //       dispatch(requestProducts(keyword, '', 'price-descending'));
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
+
   useEffect(() => {
-    dispatch(requestProducts(keyword, pageNumber));
+    dispatch(requestProducts(keyword, pageNumber, sortBy));
     dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 error state 還留在那。
-  }, [dispatch, keyword, pageNumber]);
+  }, [dispatch, keyword, pageNumber, sortBy]);
+
+  // useEffect(() => {
+  //   filterdProductsHandler();
+  // }, [history, products, status]);
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
@@ -52,7 +75,7 @@ const HomeScreen = ({ history, match }) => {
   return (
     <Row className='pt-5'>
       {/* 原本用 isPending 的 Boolean 值做 Loading,但發現進商品頁面後再回到主頁又會重複跑 Loading,個人覺得沒有必要做多餘的 Loading 畫面(因為商品早在第一次進網站時就載入完了)
-      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，所以又改回來了 */}
+      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，所以又改回來了 XD */}
       {isPending ? (
         <Loader />
       ) : error ? (
@@ -75,13 +98,18 @@ const HomeScreen = ({ history, match }) => {
             </div>
           </Col>
           <Col as='section' lg={10}>
-            <select className='form-select'>
+            <select
+              className='form-select'
+              onChange={(e) => {
+                history.push(`${path}?sort_by=${e.target.value}`);
+              }}
+            >
               {/* 讓價格不要進入選單選項內 */}
               <option value='' hidden>
                 價格
               </option>
-              <option value='價格: 低到高'>價格: 低到高</option>
-              <option value='價格: 高到低'>價格: 高到低</option>
+              <option value='price-ascending'>價格: 低到高</option>
+              <option value='price-descending'>價格: 高到低</option>
             </select>
             <h1 className='text-center mt-2'>{value}</h1>
             <Row>
@@ -92,7 +120,7 @@ const HomeScreen = ({ history, match }) => {
                 </Col>
               ))}
             </Row>
-            <Paginate pages={pages} page={page} />
+            <Paginate pages={pages} page={page} sortBy={sortBy} />
           </Col>
         </>
       )}

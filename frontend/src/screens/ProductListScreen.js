@@ -14,8 +14,6 @@ import { deleteProduct, createProduct } from '../redux/slices/apiCalls';
 
 const ProductListScreen = ({ history, match }) => {
   const [showModal, setShowModal] = useState(false);
-  const [status, setStatus] = useState('所有商品');
-  const [filterdProducts, setFilterdProducts] = useState([]);
 
   const pageNumber = match.params.pageNumber || 1;
 
@@ -40,19 +38,6 @@ const ProductListScreen = ({ history, match }) => {
     product: createdProduct,
   } = useSelector((state) => state.productCreate);
 
-  const filterdProductsHandler = () => {
-    switch (status) {
-      case '個人商品':
-        setFilterdProducts(
-          products.filter((product) => product.user === userInfo._id)
-        );
-        break;
-      default:
-        setFilterdProducts(products);
-        break;
-    }
-  };
-
   useEffect(() => {
     dispatch(productCreateReset());
     dispatch(productDeleteReset()); // 這邊也要記得 reset,不然連續刪兩個 product,第二次刪畫面不會更新
@@ -75,10 +60,6 @@ const ProductListScreen = ({ history, match }) => {
     pageNumber,
   ]);
 
-  useEffect(() => {
-    filterdProductsHandler();
-  }, [products, status]);
-
   const showModalHandler = () => setShowModal(true);
   const closeModalHandler = () => setShowModal(false);
 
@@ -90,19 +71,11 @@ const ProductListScreen = ({ history, match }) => {
     dispatch(deleteProduct(id));
   };
 
-  const statusHandler = (e) => {
-    setStatus(e.target.value);
-  };
-
   return (
     <div className='pt-5'>
       <Row className='align-items-center'>
         <Col>
           <h1>商品列表</h1>
-          <select className='form-select mb-2' onChange={statusHandler}>
-            <option value='所有商品'>所有商品</option>
-            <option value='個人商品'>個人商品</option>
-          </select>
         </Col>
         <Col className='text-end'>
           <Button className='my-3 p-2 fs-5' onClick={createProductHandler}>
@@ -131,7 +104,7 @@ const ProductListScreen = ({ history, match }) => {
               </tr>
             </thead>
             <tbody>
-              {filterdProducts.map((product) => (
+              {products.map((product) => (
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
