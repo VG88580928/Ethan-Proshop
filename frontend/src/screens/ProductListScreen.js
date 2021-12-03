@@ -88,7 +88,7 @@ const ProductListScreen = ({ history, match }) => {
       {pendingCreate && <Loader loaderType2 />}
       {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
       {isPending ? (
-        <Loader loaderType2 />
+        <Loader />
       ) : error ? (
         <Message variant='danger'>{error}</Message>
       ) : (

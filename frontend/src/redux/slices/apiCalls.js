@@ -13,6 +13,9 @@ import {
   productReviewCreateRequest,
   productReviewCreateSuccess,
   productReviewCreateFail,
+  productTopRatedRequest,
+  productTopRatedSuccess,
+  productTopRatedFail,
 } from './productSlice';
 import { addProduct, cartReset } from './cartSlice';
 import {
@@ -184,6 +187,24 @@ export const creatProductReview =
       );
     }
   };
+
+export const requestTopRatedProducts = () => async (dispatch) => {
+  try {
+    dispatch(productTopRatedRequest());
+
+    const { data } = await axios.get('/api/products/top');
+
+    dispatch(productTopRatedSuccess(data));
+  } catch (error) {
+    dispatch(
+      productTopRatedFail(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    );
+  }
+};
 
 // cart
 

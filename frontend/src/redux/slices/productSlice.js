@@ -78,6 +78,24 @@ export const productReviewCreateSlice = createSlice({
   },
 });
 
+export const productTopRatedSlice = createSlice({
+  name: 'productTopRated',
+  initialState: { products: [] },
+  reducers: {
+    productTopRatedRequest: (state) => {
+      state.pending = true;
+    },
+    productTopRatedSuccess: (state, action) => {
+      state.pending = false;
+      state.products = action.payload;
+    },
+    productTopRatedFail: (state, action) => {
+      state.pending = false;
+      state.error = action.payload;
+    },
+  },
+});
+
 // 導出 Action creaters
 export const {
   productDeleteRequest,
@@ -107,8 +125,15 @@ export const {
   productUpdateReset,
 } = productUpdateSlice.actions;
 
+export const {
+  productTopRatedRequest,
+  productTopRatedSuccess,
+  productTopRatedFail,
+} = productTopRatedSlice.actions;
+
 // 導出 reducers
 export const productDeleteReducer = productDeleteSlice.reducer;
 export const productCreateReducer = productCreateSlice.reducer;
 export const productUpdateReducer = productUpdateSlice.reducer;
 export const productReviewCreateReducer = productReviewCreateSlice.reducer;
+export const productTopRatedReducer = productTopRatedSlice.reducer;

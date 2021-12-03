@@ -5,6 +5,7 @@ import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
+import ProductCarousel from '../components/ProductCarousel';
 import { requestProducts } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 
@@ -23,33 +24,14 @@ const HomeScreen = ({ history, match, location }) => {
 
   const dispatch = useDispatch();
 
-  const { products, isPending, page, pages, error } = useSelector(
+  const { products, page, pages, error } = useSelector(
     (state) => state.requestProducts
   );
-
-  // const filterdProductsHandler = () => {
-  //   switch (status) {
-  //     case '價格: 低到高':
-  //       history.push(`${path}?sort_by=price-ascending`);
-  //       dispatch(requestProducts(keyword, '', 'price-ascending'));
-  //       break;
-  //     case '價格: 高到低':
-  //       history.push(`${path}?sort_by=price-descending`);
-  //       dispatch(requestProducts(keyword, '', 'price-descending'));
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
 
   useEffect(() => {
     dispatch(requestProducts(keyword, pageNumber, sortBy));
     dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 error state 還留在那。
   }, [dispatch, keyword, pageNumber, sortBy]);
-
-  // useEffect(() => {
-  //   filterdProductsHandler();
-  // }, [history, products, status]);
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
@@ -75,13 +57,15 @@ const HomeScreen = ({ history, match, location }) => {
   return (
     <Row className='pt-5'>
       {/* 原本用 isPending 的 Boolean 值做 Loading,但發現進商品頁面後再回到主頁又會重複跑 Loading,個人覺得沒有必要做多餘的 Loading 畫面(因為商品早在第一次進網站時就載入完了)
-      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，所以又改回來了 XD */}
-      {isPending ? (
+      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，不確定要不要改回來 */}
+      {products.length === 0 && !error ? (
         <Loader />
       ) : error ? (
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
+          {/* 如果我們正在搜尋或 sort 商品頁面(url 有 keyword or query 時)，就不顯示幻燈片 */}
+          {!keyword && !sortBy && <ProductCarousel />}
           <Col className='category' as='section' lg={2}>
             <div
               ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
@@ -105,7 +89,7 @@ const HomeScreen = ({ history, match, location }) => {
               }}
             >
               {/* 讓價格不要進入選單選項內 */}
-              <option value='' hidden>
+              <option value='價格' hidden>
                 價格
               </option>
               <option value='price-ascending'>價格: 低到高</option>

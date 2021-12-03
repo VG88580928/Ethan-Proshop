@@ -301,3 +301,42 @@ footer {
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.75);
 }
+
+/* Carousel */
+.carousel {
+  background-color: rgb(134, 142, 150);
+  margin-bottom: 25px;
+}
+
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: flex;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
+
+.carousel img {
+  height: 300px;
+  padding: 30px;
+  margin: 40px;
+  border-radius: 50%;
+  /* 確保網頁縮小時不跑版 */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 置中 */
+.carousel a {
+  margin: 0 auto;
+}
+
+@media (max-width: 500px) {
+  .carousel-caption h2 {
+    /* RWD font-size */
+    font-size: 5vw;
+  }
+}
