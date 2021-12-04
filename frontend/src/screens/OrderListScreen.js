@@ -4,6 +4,7 @@ import { Table, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Meta from '../components/Meta';
 import { listOrders } from '../redux/slices/apiCalls';
 
 const OrderListScreen = ({ history }) => {
@@ -22,6 +23,7 @@ const OrderListScreen = ({ history }) => {
 
   return (
     <div className='user-list pt-5'>
+      <Meta />
       <h1>所有訂單</h1>
       {pending ? (
         <Loader />

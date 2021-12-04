@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
+import Meta from '../components/Meta';
 import { requestProducts } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 
@@ -55,7 +56,8 @@ const HomeScreen = ({ history, match, location }) => {
   };
 
   return (
-    <Row className='pt-5'>
+    <Row className='home-screen pt-5'>
+      <Meta title='倫倫の商城 | 首頁' />
       {/* 原本用 isPending 的 Boolean 值做 Loading,但發現進商品頁面後再回到主頁又會重複跑 Loading,個人覺得沒有必要做多餘的 Loading 畫面(因為商品早在第一次進網站時就載入完了)
       ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，不確定要不要改回來 */}
       {products.length === 0 && !error ? (

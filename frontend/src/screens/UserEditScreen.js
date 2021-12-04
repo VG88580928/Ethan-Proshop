@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
+import Meta from '../components/Meta';
 import { userUpdateReset } from '../redux/slices/userSlices';
 import { getUserDetails, updateUser } from '../redux/slices/apiCalls';
 
@@ -55,6 +56,7 @@ const UserEditScreen = ({ match, history }) => {
 
   return (
     <div className='pt-2'>
+      <Meta />
       <FormContainer>
         <NavLink
           to='/admin/userlist'

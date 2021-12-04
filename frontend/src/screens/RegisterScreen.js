@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
+import Meta from '../components/Meta';
 import { register } from '../redux/slices/apiCalls';
 
 const RegisterScreen = ({ location, history }) => {
@@ -39,6 +40,7 @@ const RegisterScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
+      <Meta />
       <h1 className='text-center'>註冊</h1>
       {message && <Message variant='danger'>{message}</Message>}
       {error && <Message variant='danger'>{error}</Message>}

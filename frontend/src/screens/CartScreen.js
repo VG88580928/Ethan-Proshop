@@ -13,6 +13,7 @@ import {
   ListGroupItem,
 } from 'react-bootstrap';
 import Message from '../components/Message';
+import Meta from '../components/Meta';
 import { addToCart } from '../redux/slices/apiCalls';
 import { removeProduct } from '../redux/slices/cartSlice';
 
@@ -63,6 +64,7 @@ const CartScreen = ({ history }) => {
 
   return (
     <Row className='cart-screen pt-5'>
+      <Meta title='倫倫の商城 | 購物車' />
       <Col md={8} className='left-part'>
         <h1>購物車</h1>
         {cartProducts.length === 0 ? (

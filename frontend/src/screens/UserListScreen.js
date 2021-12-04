@@ -4,6 +4,7 @@ import { Table, Button, Modal } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Meta from '../components/Meta';
 import { listUsers, deleteUser } from '../redux/slices/apiCalls';
 
 const UserListScreen = ({ history }) => {
@@ -32,6 +33,7 @@ const UserListScreen = ({ history }) => {
 
   return (
     <div className='user-list pt-5'>
+      <Meta />
       <h1>所有用戶</h1>
       {pending ? (
         <Loader />

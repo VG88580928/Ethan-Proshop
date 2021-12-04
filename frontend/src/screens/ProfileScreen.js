@@ -4,6 +4,7 @@ import { Form, Button, Row, Col, Table } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Meta from '../components/Meta';
 import {
   getUserDetails,
   updateUserProfile,
@@ -72,6 +73,7 @@ const ProfileScreen = ({ location, history }) => {
 
   return (
     <Row className='pt-5'>
+      <Meta title='倫倫の商城 | 個人資料' />
       <Col md={3}>
         <h2 className='text-center'>個人資料</h2>
         {message && <Message variant='danger'>{message}</Message>}

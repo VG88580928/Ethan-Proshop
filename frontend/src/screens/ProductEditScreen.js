@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
+import Meta from '../components/Meta';
 import { requestProductDetails } from '../redux/actions/productActions';
 import { updateProduct } from '../redux/slices/apiCalls';
 import { productUpdateReset } from '../redux/slices/productSlice';
@@ -99,6 +100,7 @@ const ProductEditScreen = ({ match, history }) => {
 
   return (
     <div className='pt-2'>
+      <Meta />
       <FormContainer>
         <NavLink
           to='/admin/productlist'

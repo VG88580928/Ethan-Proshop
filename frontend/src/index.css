@@ -178,6 +178,24 @@ footer {
   }
 }
 
+/* HomeScreen */
+.home-screen .sellout::before {
+  content: '已售完';
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 15px 5px;
+  background-color: #e76464;
+  /* 文字轉成垂直 */
+  -webkit-writing-mode: vertical-rl;
+  /* -ms- & tb-rl for IE */
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 5px;
+}
+
 /* ProductScreen */
 .product-screen .input-group {
   justify-content: center;

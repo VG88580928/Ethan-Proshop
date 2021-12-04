@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
+import Meta from '../components/Meta';
 import { requestProducts } from '../redux/actions/productActions';
 import {
   productCreateReset,
@@ -73,6 +74,7 @@ const ProductListScreen = ({ history, match }) => {
 
   return (
     <div className='pt-5'>
+      <Meta />
       <Row className='align-items-center'>
         <Col>
           <h1>商品列表</h1>

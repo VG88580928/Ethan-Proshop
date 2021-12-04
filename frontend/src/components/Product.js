@@ -5,8 +5,16 @@ import Rating from './Rating';
 
 const Product = ({ product }) => {
   return (
-    // 加入minHeight讓商品卡片等高
-    <Card className='my-3 p-3 rounded' style={{ minHeight: '430px' }}>
+    // 加入minHeight讓商品卡片等高，庫存為 0 時顯示已售完圖示
+    // 把 sellout::before 放在 div 而不是 image 上是因為 ::before 無法用在 image 上 (來源: https://stackoverflow.com/questions/5843035/does-before-not-work-on-img-elements/5843164#5843164)
+    <Card
+      className={
+        product.countInStock === 0
+          ? 'my-3 p-3 rounded sellout'
+          : 'my-3 p-3 rounded'
+      }
+      style={{ minHeight: '430px' }}
+    >
       <NavLink to={`/product/${product._id}`}>
         {/* 因為原本是a標籤會有換頁行為，把a標籤換成NavLink後，換頁就不會刷新頁面了 */}
         <Card.Img src={product.image} variant='top' />

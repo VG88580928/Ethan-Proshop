@@ -15,6 +15,7 @@ import {
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Meta from '../components/Meta';
 import { requestProductDetails } from '../redux/actions/productActions';
 import { productReviewCreateReset } from '../redux/slices/productSlice';
 import { addToCart, creatProductReview } from '../redux/slices/apiCalls';
@@ -103,6 +104,7 @@ const ProductScreen = ({ history, match }) => {
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
+          <Meta title={`${product.name} | 倫倫の商城`} />
           <Row>
             <Col className='product-screen-section' md={6}>
               {/* fluid = max-width:100% height:auto 讓圖片能鎖在 Col 這個 container 內 */}

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
+import Meta from '../components/Meta';
 import { login } from '../redux/slices/apiCalls';
 
 const LoginScreen = ({ location, history }) => {
@@ -31,6 +32,7 @@ const LoginScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
+      <Meta />
       <h1 className='text-center'>登入</h1>
       {error && <Message variant='danger'>{error}</Message>}
       {pending && <Loader loaderType2 />}

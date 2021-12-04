@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Carousel, Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import Loader from './Loader';
 import Message from './Message';
 import { requestTopRatedProducts } from '../redux/slices/apiCalls';
 
