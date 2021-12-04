@@ -84,6 +84,7 @@ const HomeScreen = ({ history, match, location }) => {
           <Col as='section' lg={10}>
             <select
               className='form-select'
+              style={{ marginTop: '10px' }}
               onChange={(e) => {
                 history.push(`${path}?sort_by=${e.target.value}`);
               }}

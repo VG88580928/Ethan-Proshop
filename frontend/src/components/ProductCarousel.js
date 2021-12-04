@@ -18,8 +18,8 @@ const ProductCarousel = () => {
   return error ? (
     <Message variant='danger'>{error}</Message>
   ) : (
-    // pause='hover' => hover 時暫停捲動
-    <Carousel pause='hover' variant='dark'>
+    // pause='hover' => hover 時暫停捲動   p.s. 想要漸層換頁使用 fade
+    <Carousel pause='hover'>
       {products.map((product) => (
         <Carousel.Item key={product._id}>
           <NavLink to={`/product/${product._id}`}>

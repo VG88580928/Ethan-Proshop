@@ -51,7 +51,7 @@ const ProductScreen = ({ history, match }) => {
     if (Number.isNaN(inputNumber) || inputNumber < 0) {
       setQuantity(''); // 如果輸入的不是數字 or 輸入負值讓 input value 保持 0
     } else if (inputNumber > product.countInStock) {
-      setQuantity(product.countInStock); // 輸入數字最大值為商品總數量
+      setQuantity(product.countInStock); // 限制輸入數字的最大值為商品總數量
     } else {
       setQuantity(inputNumber);
     }

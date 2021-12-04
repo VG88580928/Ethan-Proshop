@@ -304,7 +304,7 @@ footer {
 
 /* Carousel */
 .carousel {
-  background-color: rgb(134, 142, 150);
+  background-color: rgb(55, 57, 64);
   margin-bottom: 25px;
 }
 
@@ -317,11 +317,13 @@ footer {
 .carousel-caption {
   position: absolute;
   top: 0;
+  /* 讓字縮排時不要擋到圖片 */
+  padding: 10px;
 }
 
 .carousel img {
   height: 300px;
-  padding: 30px;
+  padding: 40px;
   margin: 40px;
   border-radius: 50%;
   /* 確保網頁縮小時不跑版 */
