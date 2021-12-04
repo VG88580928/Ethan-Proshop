@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'; // 優化過去 connect 的寫法
 import { Col, Row, Card } from 'react-bootstrap';
 import Product from '../components/Product';
@@ -8,10 +8,13 @@ import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
 import { requestProducts } from '../redux/actions/productActions';
-import { productReviewCreateReset } from '../redux/slices/productSlice';
+import {
+  productReviewCreateReset,
+  productCategoryChange,
+} from '../redux/slices/productSlice';
 
 const HomeScreen = ({ history, match, location }) => {
-  const [value, setValue] = useState('所有商品');
+  // const [value, setValue] = useState('所有商品');
 
   const path = location.pathname; // 取得 url 的 pathname 部分
 
@@ -25,6 +28,8 @@ const HomeScreen = ({ history, match, location }) => {
 
   const dispatch = useDispatch();
 
+  const { category } = useSelector((state) => state.productCategory);
+
   const { products, page, pages, error } = useSelector(
     (state) => state.requestProducts
   );
@@ -32,27 +37,33 @@ const HomeScreen = ({ history, match, location }) => {
   useEffect(() => {
     dispatch(requestProducts(keyword, pageNumber, sortBy));
     dispatch(productReviewCreateReset()); // 這邊要記得 reset，不然當你重複評論過一樣商品顯示你已評論過該商品後，再去看另一種商品時該訊息還會存在，因為剛剛的 error state 還留在那。
-  }, [dispatch, keyword, pageNumber, sortBy]);
+
+    if (path === '/') {
+      dispatch(productCategoryChange('全部商品'));
+    }
+  }, [dispatch, keyword, pageNumber, sortBy, path]);
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
      會直接把所有 value 印到畫面上(變這樣 =>'所有商品手機類耳機類遊戲類') */
     // 這邊利用了 Event Delegation 的技巧，所以只需要在 div 上註冊一次點擊事件
-    if (e.target.tagName === 'DIV' && e.target.className === 'card')
-      setValue(e.target.textContent);
+    // if (e.target.tagName === 'DIV' && e.target.className === 'card active')
+    dispatch(productCategoryChange(e.target.textContent));
   };
 
   const active = (e) => {
     const divs = divRef.current.querySelectorAll('.card'); // 不要寫成 document.querySelectorAll('.category .card')，你抓了 document 會抓到其他 components，可能導致非預期的 bugs(參考:https://stackoverflow.com/questions/57556673/react-ref-and-query-selector-all)
     divs.forEach((div) => div.classList.remove('active'));
-    if (e.target.tagName === 'DIV' && e.target.className === 'card') {
-      e.target.classList.add('active');
-    }
+    // if (e.target.tagName === 'DIV' && e.target.className === 'card') {
+    e.target.classList.add('active');
+    // }
   };
 
   const filteredProductsByCategory = (e) => {
     const category = e.target.textContent;
+    active(e);
     history.push(`/search/${category}`);
+    changeValue(e);
   };
 
   return (
@@ -71,16 +82,16 @@ const HomeScreen = ({ history, match, location }) => {
           <Col className='category' as='section' lg={2}>
             <div
               ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
-              onClick={(e) => {
-                // 再點擊事件中同時執行多個函式
-                changeValue(e);
-                active(e);
-              }}
+              // onClick={(e) => {
+              //   // 再點擊事件中同時執行多個函式
+              //   // changeValue(e);
+              //   active(e);
+              // }}
             >
               <Card onClick={() => history.push('/')}>所有商品</Card>
-              <Card onClick={filteredProductsByCategory}>手機類</Card>
+              <Card onClick={filteredProductsByCategory}>滑鼠類</Card>
               <Card onClick={filteredProductsByCategory}>耳機類</Card>
-              <Card onClick={filteredProductsByCategory}>遊戲類</Card>
+              <Card onClick={filteredProductsByCategory}>鍵盤類</Card>
             </div>
           </Col>
           <Col as='section' lg={10}>
@@ -98,7 +109,7 @@ const HomeScreen = ({ history, match, location }) => {
               <option value='price-ascending'>價格: 低到高</option>
               <option value='price-descending'>價格: 高到低</option>
             </select>
-            <h1 className='text-center mt-2'>{value}</h1>
+            <h1 className='text-center mt-2'>{category}</h1>
             <Row>
               {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
               {products.map((product) => (

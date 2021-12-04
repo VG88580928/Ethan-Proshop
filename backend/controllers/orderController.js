@@ -47,7 +47,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
       totalPrice,
     });
 
-    // 在把資料存進 DB 前，確保商品價格正確沒有被 user 串改 ()
+    // 在把資料存進 DB 前，確保商品價格正確沒有被 user 串改
     for (let i = 0, l = order.orderItems.length; i < l; i++) {
       const product = await Product.findById(order.orderItems[i]._id);
 
@@ -55,7 +55,8 @@ const addOrderItems = asyncHandler(async (req, res) => {
         order.orderItems[i].price = product.price;
       }
     }
-    // 目前 itemsPrice & shippingPrice & taxPrice & totalPrice 都還有被串改可能，如果要保持購物車商品放在 local storage 裡，目前我想的到的方法都必須多次查詢資料庫，也需要在 controller 內做多次運算，很耗效能，所以此安全性問題暫時先擱置。
+
+    // FIXME: 目前 itemsPrice & shippingPrice & taxPrice & totalPrice 都還有被串改可能，如果要保持購物車商品放在 local storage 裡，目前我想的到的方法都必須多次查詢資料庫，也需要在 controller 內做多次運算，很耗效能，所以此安全性問題暫時先擱置。(感覺把 cart items 放 DB 會比較好?)
 
     const createdOrder = await order.save(); // save() 和 create() 差別是 create() 是結合兩者 => instantiate new mongoose Model and save it
 

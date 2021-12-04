@@ -293,6 +293,16 @@ footer {
   }
 }
 
+@media (max-width: 767.98px) {
+  .cart-screen .btn-success {
+    margin-top: 10px;
+  }
+  .cart-screen .flex-center-sm {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 /* CheckoutSteps */
 
 .checkoutSteps .nav-item {

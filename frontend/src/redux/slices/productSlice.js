@@ -96,6 +96,16 @@ export const productTopRatedSlice = createSlice({
   },
 });
 
+export const productCategorySlice = createSlice({
+  name: 'productCategory',
+  initialState: { category: '全部商品' },
+  reducers: {
+    productCategoryChange: (state, action) => {
+      state.category = action.payload;
+    },
+  },
+});
+
 // 導出 Action creaters
 export const {
   productDeleteRequest,
@@ -131,9 +141,12 @@ export const {
   productTopRatedFail,
 } = productTopRatedSlice.actions;
 
+export const { productCategoryChange } = productCategorySlice.actions;
+
 // 導出 reducers
 export const productDeleteReducer = productDeleteSlice.reducer;
 export const productCreateReducer = productCreateSlice.reducer;
 export const productUpdateReducer = productUpdateSlice.reducer;
 export const productReviewCreateReducer = productReviewCreateSlice.reducer;
 export const productTopRatedReducer = productTopRatedSlice.reducer;
+export const productCategoryReducer = productCategorySlice.reducer;

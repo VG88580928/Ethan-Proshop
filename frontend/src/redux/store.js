@@ -10,6 +10,7 @@ import {
   productUpdateReducer,
   productReviewCreateReducer,
   productTopRatedReducer,
+  productCategoryReducer,
 } from './slices/productSlice';
 import cartReducer from './slices/cartSlice';
 import {
@@ -65,6 +66,7 @@ const store = configureStore({
   reducer: {
     requestProducts: requestProductsReducer,
     requestProductDetails: requestProductDetailsReducer,
+    productCategory: productCategoryReducer,
     productCreate: productCreateReducer,
     productDelete: productDeleteReducer,
     productUpdate: productUpdateReducer,

@@ -135,7 +135,7 @@ const CartScreen = ({ history }) => {
                       </InputGroup>
                     </ListGroup.Item>
                   </Col>
-                  <Col md={1}>
+                  <Col md={1} className='flex-center-sm'>
                     <Button
                       type='button'
                       variant='success'
