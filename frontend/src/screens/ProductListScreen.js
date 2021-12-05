@@ -16,6 +16,9 @@ import { deleteProduct, createProduct } from '../redux/slices/apiCalls';
 const ProductListScreen = ({ history, match }) => {
   const [showModal, setShowModal] = useState(false);
 
+  // 因為發現刪除商品時，會刪錯商品(總是刪到該頁最後一項商品，因為跳彈窗時畫面 re-render 後，product._id 會跑到最後面)，因此在點刪除當下就先存下商品 id 到 state，就不會刪錯了
+  const [deleteId, setDeleteId] = useState('');
+
   const pageNumber = match.params.pageNumber || 1;
 
   const dispatch = useDispatch();
@@ -61,8 +64,13 @@ const ProductListScreen = ({ history, match }) => {
     pageNumber,
   ]);
 
-  const showModalHandler = () => setShowModal(true);
-  const closeModalHandler = () => setShowModal(false);
+  const showModalHandler = (id) => {
+    setDeleteId(id);
+    setShowModal(true);
+  };
+  const closeModalHandler = () => {
+    setShowModal(false);
+  };
 
   const createProductHandler = () => {
     dispatch(createProduct());
@@ -122,7 +130,10 @@ const ProductListScreen = ({ history, match }) => {
                     >
                       <i className='fas fa-edit'></i>
                     </Button>
-                    <Button variant='danger' onClick={showModalHandler}>
+                    <Button
+                      variant='danger'
+                      onClick={() => showModalHandler(product._id)}
+                    >
                       <i className='fas fa-trash'></i>
                     </Button>
 
@@ -140,7 +151,7 @@ const ProductListScreen = ({ history, match }) => {
                           className='fs-5'
                           variant='primary'
                           onClick={() => {
-                            deleteHandler(product._id);
+                            deleteHandler(deleteId);
                             closeModalHandler();
                           }}
                         >

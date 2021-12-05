@@ -108,7 +108,12 @@ const ProductScreen = ({ history, match }) => {
           <Row>
             <Col className='product-screen-section' md={6}>
               {/* fluid = max-width:100% height:auto 讓圖片能鎖在 Col 這個 container 內 */}
-              <Image src={product.image} alt={product.name} fluid />
+              <Image
+                className='border'
+                src={product.image}
+                alt={product.name}
+                fluid
+              />
             </Col>
             <Col className='product-screen-section' md={3}>
               {/* variant='flush' 移除外邊框 */}

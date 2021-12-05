@@ -17,6 +17,7 @@ const HomeScreen = ({ history, match, location }) => {
   // const [value, setValue] = useState('所有商品');
 
   const path = location.pathname; // 取得 url 的 pathname 部分 (不包括 query 部分)
+  console.log(path);
 
   const keyword = match.params.keyword;
 
@@ -115,7 +116,8 @@ const HomeScreen = ({ history, match, location }) => {
               {keyword === '滑鼠類' ||
               keyword === '耳機類' ||
               keyword === '鍵盤類' ||
-              path === '/' ? (
+              path === '/' ||
+              path.substring(0, 6) === '/page/' ? (
                 <h1 className='text-center mt-2'>{category}</h1>
               ) : (
                 <h1 className='text-center mt-2'>查詢結果</h1>

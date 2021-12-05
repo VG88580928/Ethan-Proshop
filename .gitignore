@@ -2,8 +2,8 @@
 
 # dependencies
 /node_modules
-node_modules/ 
 # node_modules/ << 此語法可忽略當前資料夾以及所有子資料夾同名檔案
+node_modules/ 
 /.pnp
 .pnp.js
 
