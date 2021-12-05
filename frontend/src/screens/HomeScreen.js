@@ -16,7 +16,7 @@ import {
 const HomeScreen = ({ history, match, location }) => {
   // const [value, setValue] = useState('所有商品');
 
-  const path = location.pathname; // 取得 url 的 pathname 部分
+  const path = location.pathname; // 取得 url 的 pathname 部分 (不包括 query 部分)
 
   const keyword = match.params.keyword;
 
@@ -112,7 +112,15 @@ const HomeScreen = ({ history, match, location }) => {
                 <option value='price-ascending'>價格: 低到高</option>
                 <option value='price-descending'>價格: 高到低</option>
               </select>
-              <h1 className='text-center mt-2'>{category}</h1>
+              {keyword === '滑鼠類' ||
+              keyword === '耳機類' ||
+              keyword === '鍵盤類' ||
+              path === '/' ? (
+                <h1 className='text-center mt-2'>{category}</h1>
+              ) : (
+                <h1 className='text-center mt-2'>查詢結果</h1>
+              )}
+              {/* <h1 className='text-center mt-2'>{category}</h1> */}
               <Row>
                 {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
                 {products.map((product) => (
