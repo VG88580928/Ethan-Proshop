@@ -30,7 +30,7 @@ const HomeScreen = ({ history, match, location }) => {
 
   const { category } = useSelector((state) => state.productCategory);
 
-  const { products, page, pages, error } = useSelector(
+  const { isPending, products, page, pages, error } = useSelector(
     (state) => state.requestProducts
   );
 
@@ -94,32 +94,36 @@ const HomeScreen = ({ history, match, location }) => {
               <Card onClick={filteredProductsByCategory}>鍵盤類</Card>
             </div>
           </Col>
-          <Col as='section' lg={10}>
-            <select
-              className='form-select'
-              style={{ marginTop: '10px' }}
-              onChange={(e) => {
-                history.push(`${path}?sort_by=${e.target.value}`);
-              }}
-            >
-              {/* 讓價格不要進入選單選項內 */}
-              <option value='價格' hidden>
-                價格
-              </option>
-              <option value='price-ascending'>價格: 低到高</option>
-              <option value='price-descending'>價格: 高到低</option>
-            </select>
-            <h1 className='text-center mt-2'>{category}</h1>
-            <Row>
-              {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
-              {products.map((product) => (
-                <Col key={product._id} sm={12} md={6} lg={4}>
-                  <Product product={product} />
-                </Col>
-              ))}
-            </Row>
-            <Paginate pages={pages} page={page} sortBy={sortBy} />
-          </Col>
+          {isPending ? (
+            <Loader loaderType2></Loader>
+          ) : (
+            <Col as='section' lg={10}>
+              <select
+                className='form-select'
+                style={{ marginTop: '10px' }}
+                onChange={(e) => {
+                  history.push(`${path}?sort_by=${e.target.value}`);
+                }}
+              >
+                {/* 讓價格不要進入選單選項內 */}
+                <option value='價格' hidden>
+                  價格
+                </option>
+                <option value='price-ascending'>價格: 低到高</option>
+                <option value='price-descending'>價格: 高到低</option>
+              </select>
+              <h1 className='text-center mt-2'>{category}</h1>
+              <Row>
+                {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
+                {products.map((product) => (
+                  <Col key={product._id} sm={12} md={6} lg={4}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+              </Row>
+              <Paginate pages={pages} page={page} sortBy={sortBy} />
+            </Col>
+          )}
         </>
       )}
     </Row>
