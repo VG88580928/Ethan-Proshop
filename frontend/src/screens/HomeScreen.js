@@ -89,7 +89,7 @@ const HomeScreen = ({ history, match, location }) => {
               //   active(e);
               // }}
             >
-              <Card onClick={() => history.push('/')}>所有商品</Card>
+              <Card onClick={() => history.push('/')}>全部商品</Card>
               <Card onClick={filteredProductsByCategory}>滑鼠類</Card>
               <Card onClick={filteredProductsByCategory}>耳機類</Card>
               <Card onClick={filteredProductsByCategory}>鍵盤類</Card>
