@@ -29,7 +29,9 @@ const SearchBox = () => {
 
     if (keyword.trim()) {
       emptyArray = allProducts.filter((product) => {
-        return product.name.toLocaleLowerCase().startsWith(keyword.trim()); // 先用 filter() 把名字開頭符合 keyword 的商品丟到這個空 array
+        return product.name
+          .toLocaleLowerCase()
+          .startsWith(keyword.toLocaleLowerCase().trim()); // 先用 filter() 把名字開頭符合 keyword 的商品丟到這個空 array
       });
       // 之後再把這些商品的名字用 map 取出來，頭尾加上 html 的 <option></option> 後生成新 array
       emptyArray = emptyArray.map((filteredProduct) => {
