@@ -17,7 +17,6 @@ const HomeScreen = ({ history, match, location }) => {
   // const [value, setValue] = useState('所有商品');
 
   const path = location.pathname; // 取得 url 的 pathname 部分 (不包括 query 部分)
-  console.log(path);
 
   const keyword = match.params.keyword;
 
