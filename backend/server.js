@@ -22,6 +22,8 @@ connectDB(); // 連結 DB
 
 const app = express();
 
+// app.use(Middleware) 的詳細介紹 https://stackoverflow.com/questions/11321635/nodejs-express-what-is-app-use/11321828#11321828
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -50,15 +52,28 @@ app.get('/api/config/paypal', (req, res) =>
 // const __dirname = path.resolve();
 // app.use('/uploads', express.static(path.join(__dirname, '/uploads'))); // 如果圖片要放 local 直接上傳網上，需要把該資料夾轉為 static folder(現在放圖片放雲端了所以不需要)
 
+const __dirname = path.resolve(); // 當前資料夾位置
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')));
+
+  // '*' 表示除了上面那些 API 的 route 以外的任何端口，回傳 build 裡的 index.html
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
+
 // Error-handling middleware
 app.use(notFound); // 當 req 的 url 找不到時觸發
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV;
 
 app.listen(
-  5000,
-  console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`)
+  PORT,
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 );
