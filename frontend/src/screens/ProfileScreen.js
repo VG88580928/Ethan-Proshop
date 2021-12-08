@@ -11,7 +11,7 @@ import {
   listMyOrders,
 } from '../redux/slices/apiCalls';
 
-const ProfileScreen = ({ location, history }) => {
+const ProfileScreen = ({ history }) => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

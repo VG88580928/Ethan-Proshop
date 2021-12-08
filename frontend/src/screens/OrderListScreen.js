@@ -8,6 +8,12 @@ import Meta from '../components/Meta';
 import { listOrders } from '../redux/slices/apiCalls';
 
 const OrderListScreen = ({ history }) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  });
+
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -48,7 +54,7 @@ const OrderListScreen = ({ history }) => {
                 <td>{order._id}</td>
                 <td>{order.user && order.user.name}</td>
                 <td>{order.createdAt.substring(0, 10)}</td>
-                <td>{order.totalPrice}</td>
+                <td>{formatter.format(order.totalPrice)}</td>
                 <td>
                   {order.isPaid ? (
                     `${order.paidAt.substring(0, 10)}`
