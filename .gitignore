@@ -16,8 +16,8 @@ node_modules/
 
 # misc
 .DS_Store
-.env
 # 忽略.env很重要，裡面會有敏感重要資訊，例如PayPal API key,MongoDB URI...
+.env
 .env.local
 .env.development.local
 .env.test.local
