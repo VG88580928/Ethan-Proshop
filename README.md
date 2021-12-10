@@ -68,7 +68,7 @@
 
 無會員進入註冊頁面
 
-![註冊頁面](https://i.imgur.com/Bc3gdSy.png)
+![註冊頁面](https://i.imgur.com/mO8p0qN.png)
 
 登入或註冊完後都會直接導至運送資料填寫頁面
 
