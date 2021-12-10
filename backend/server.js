@@ -35,6 +35,8 @@ cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
   api_secret: process.env.CLOUD_API_SECRET,
+  // secure: true 記得寫，不然打上去的圖片會是 http 而不是 https
+  secure: true,
 });
 
 // 當 server 收到 req,這個 req 會經過下面一連串的 middleware-chain，找到它該去的地方

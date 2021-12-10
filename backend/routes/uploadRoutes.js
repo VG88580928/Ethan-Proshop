@@ -54,7 +54,8 @@ router.post(
     const uploadPhoto = await cloudinary.v2.uploader.upload(`${req.file.path}`); // req.file.path 為暫存在 uploads 資料夾的圖片位置(像這樣 => uploads\image-1637449277314.jpg)
     // console.log(uploadPhoto); // This will give you all the information back from the uploaded photo result
     // console.log(uploadPhoto.url); // This is what we want to send back now in the  res.send
-    res.send(uploadPhoto.url);
+    // secure_url => https
+    res.send(uploadPhoto.secure_url);
   })
 );
 
