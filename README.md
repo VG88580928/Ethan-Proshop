@@ -72,8 +72,24 @@
 
 登入或註冊完後都會直接導至運送資料填寫頁面
 
-![運送頁面](https://i.imgur.com/FQ0QkH5.png)
+![運送頁面](https://i.imgur.com/UDd7NQ4.png)
 
 選擇付款方式 (目前只有一項，未來可擴充)
 
 ![付款方式頁面](https://i.imgur.com/8q7i8b0.png)
+
+創建訂單頁面，點擊**創建訂單** (創完訂單後會清空購物車內容)
+
+![創建訂單頁面](https://i.imgur.com/346NZQt.png)
+
+創建完訂單，可以看見訂單的**運送**及**付款**狀態
+
+![訂單資訊頁面](https://i.imgur.com/iMA1UZI.png)
+
+以 paypal 付款做舉例，點選 paypal 按鈕
+
+![paypal 頁面](https://i.imgur.com/PFeNW6i.png)
+
+點擊 **pay now** 後，訂單付款狀態會顯示已付款
+
+![訂單資訊頁面](https://i.imgur.com/YHCG9n4.png)
