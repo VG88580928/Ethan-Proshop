@@ -5,10 +5,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Meta from '../components/Meta';
+import { userDeleteReset } from '../redux/slices/userSlices';
 import { listUsers, deleteUser } from '../redux/slices/apiCalls';
 
 const UserListScreen = ({ history }) => {
   const [showModal, setShowModal] = useState(false);
+
+  const [deleteId, setDeleteId] = useState('');
 
   const dispatch = useDispatch();
 
@@ -17,6 +20,7 @@ const UserListScreen = ({ history }) => {
   const { success } = useSelector((state) => state.userDelete);
 
   useEffect(() => {
+    dispatch(userDeleteReset()); // 要記得 reset,不然連續刪兩個 user,第二次刪畫面不會更新
     if (userInfo && userInfo.isAdmin) {
       dispatch(listUsers());
     } else {
@@ -24,7 +28,10 @@ const UserListScreen = ({ history }) => {
     }
   }, [dispatch, userInfo, history, success]);
 
-  const showModalHandler = () => setShowModal(true);
+  const showModalHandler = (id) => {
+    setDeleteId(id);
+    setShowModal(true);
+  };
   const closeModalHandler = () => setShowModal(false);
 
   const deleteHandler = (id) => {
@@ -88,7 +95,7 @@ const UserListScreen = ({ history }) => {
                   <Button
                     variant='danger'
                     disabled={userInfo._id === user._id} // 如果是本人，就無法按刪除鍵，這樣管理員就無法刪除自己
-                    onClick={showModalHandler}
+                    onClick={() => showModalHandler(user._id)}
                   >
                     <i className='fas fa-trash'></i>
                   </Button>
@@ -107,7 +114,7 @@ const UserListScreen = ({ history }) => {
                         className='fs-5'
                         variant='primary'
                         onClick={() => {
-                          deleteHandler(user._id);
+                          deleteHandler(deleteId);
                           closeModalHandler();
                         }}
                       >

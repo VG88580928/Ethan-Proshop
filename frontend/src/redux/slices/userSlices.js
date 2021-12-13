@@ -108,6 +108,7 @@ export const userDeleteSlice = createSlice({
       state.pending = false;
       state.error = action.payload;
     },
+    userDeleteReset: () => ({}),
   },
 });
 
@@ -141,8 +142,12 @@ export const { updateProfileRequest, updateProfileSuccess, updateProfileFail } =
   userUpdateProfileSlice.actions;
 export const { userListRequest, userListSuccess, userListFail } =
   userListSlice.actions;
-export const { userDeleteRequest, userDeleteSuccess, userDeleteFail } =
-  userDeleteSlice.actions;
+export const {
+  userDeleteRequest,
+  userDeleteSuccess,
+  userDeleteFail,
+  userDeleteReset,
+} = userDeleteSlice.actions;
 export const {
   userUpdateRequest,
   userUpdateSuccess,
