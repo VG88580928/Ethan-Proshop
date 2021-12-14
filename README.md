@@ -66,7 +66,7 @@
 
 ![登入頁面](https://i.imgur.com/Bc3gdSy.png)
 
-無會員進入註冊頁面
+無會員進入註冊頁面註冊
 
 ![註冊頁面](https://i.imgur.com/mO8p0qN.png)
 
@@ -93,3 +93,82 @@
 點擊 **pay now** 後，訂單付款狀態會顯示已付款
 
 ![訂單資訊頁面](https://i.imgur.com/YHCG9n4.png)
+
+### 評論功能
+
+先進入商品頁面底下，評論前需先登入
+
+![未登錄評論](https://i.imgur.com/r5Sb0k4.png)
+
+登入後，先選擇評價分數
+
+![評論1](https://i.imgur.com/kuBHYnP.png)
+
+輸入評論
+
+![評論2](https://i.imgur.com/PyTtJGY.png)
+
+點選**提交**後，跳出成功提示及代表評論成功
+
+![評論3](https://i.imgur.com/0Ui2kRA.png)
+
+![評論4](https://i.imgur.com/992cNg2.png)
+
+若之後重複留言同樣商品，則會跳出警告
+
+![評論5](https://i.imgur.com/jNylrGl.png)
+
+### 個人資料頁面
+
+右上角點選**個人資料**
+
+![個人資料](https://i.imgur.com/rBdc5Wm.png)
+
+進入後左邊姓名信箱等會自動填入該用戶資訊，右邊可看見自己的訂單
+
+![個人資料頁面](https://i.imgur.com/ZkxKF7x.png)
+
+個人資料部分可以更改**姓名**、**信箱**及**密碼**，更改成功或失敗皆會跳出提示訊息
+
+![個人資料提示](https://i.imgur.com/BVovGcc.png)
+
+## 管理員後台介紹
+
+從右上角分別進入各頁面
+
+![管理員選單](https://i.imgur.com/gkJnsmE.png)
+
+用戶列表頁面，可**編輯**及**刪除**用戶(無法編輯刪除自己)
+
+![用戶列表頁面](https://i.imgur.com/c4Zw4Em.png)
+
+![編輯用戶頁面](https://i.imgur.com/SqrstvT.png)
+
+商品列表頁面，可**創建**、**編輯**及**刪除**商品
+
+![商品列表頁面](https://i.imgur.com/XPiTMl1.png)
+
+![編輯商品頁面](https://i.imgur.com/QRnZEgh.png)
+
+訂單列表頁面
+
+![訂單列表頁面](https://i.imgur.com/grKRfUM.png)
+
+若要出貨商品時，點選要出貨的訂單後面的`詳細`按鈕進入該訂單頁面
+
+![訂單頁面](https://i.imgur.com/mlFdRCY.png)
+
+點擊`標記為已配送`即完成出貨，此時商品庫存將會扣除
+
+![訂單頁面](https://i.imgur.com/ra5ZHHa.png)
+
+其餘更多細節部分，歡迎至 Demo 網站觀看：<https://ethan-proshop.herokuapp.com/>
+
+## :art: Sources | 商品圖片來源
+
+- [羅技官網](https://www.logitech.com/zh-tw)
+- [FiiO官網](https://www.fiio.com.tw/)
+
+
+
+
