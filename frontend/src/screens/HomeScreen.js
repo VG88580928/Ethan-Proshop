@@ -45,7 +45,7 @@ const HomeScreen = ({ history, match, location }) => {
 
   const changeValue = (e) => {
     /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
-     會直接把所有 value 印到畫面上(變這樣 =>'所有商品手機類耳機類遊戲類') */
+     會直接把所有 value 印到畫面上(變這樣 =>'全部商品滑鼠類耳機類遊戲類') */
     // 這邊利用了 Event Delegation 的技巧，所以只需要在 div 上註冊一次點擊事件
     // if (e.target.tagName === 'DIV' && e.target.className === 'card active')
     dispatch(productCategoryChange(e.target.textContent));
@@ -54,15 +54,13 @@ const HomeScreen = ({ history, match, location }) => {
   const active = (e) => {
     const divs = divRef.current.querySelectorAll('.card'); // 不要寫成 document.querySelectorAll('.category .card')，你抓了 document 會抓到其他 components，可能導致非預期的 bugs(參考:https://stackoverflow.com/questions/57556673/react-ref-and-query-selector-all)
     divs.forEach((div) => div.classList.remove('active'));
-    // if (e.target.tagName === 'DIV' && e.target.className === 'card') {
     e.target.classList.add('active');
-    // }
   };
 
   const filteredProductsByCategory = (e) => {
     const category = e.target.textContent;
-    active(e);
     history.push(`/search/${category}`);
+    active(e);
     changeValue(e);
   };
 
@@ -70,7 +68,7 @@ const HomeScreen = ({ history, match, location }) => {
     <Row className='home-screen pt-5'>
       <Meta title='倫倫の商城 | 首頁' />
       {/* 原本用 isPending 的 Boolean 值做 Loading,但發現進商品頁面後再回到主頁又會重複跑 Loading,個人覺得沒有必要做多餘的 Loading 畫面(因為商品早在第一次進網站時就載入完了)
-      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) => 但後來做了換頁功能和搜尋功能，這樣換頁搜尋時就不會跑 loader 了，不確定要不要改回來 */}
+      ，因此刪除 isPending 改用 products.length === 0 && !error 做動態渲染來增加 UX(使用者體驗) */}
       {products.length === 0 && !error ? (
         <Loader />
       ) : error ? (
@@ -82,57 +80,59 @@ const HomeScreen = ({ history, match, location }) => {
           <Col className='category' as='section' lg={2}>
             <div
               ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
-              // onClick={(e) => {
-              //   // 再點擊事件中同時執行多個函式
-              //   // changeValue(e);
-              //   active(e);
-              // }}
+              onClick={(e) => {
+                if (e.target.className.includes('card'))
+                  filteredProductsByCategory(e);
+              }}
             >
-              <Card onClick={() => history.push('/')}>全部商品</Card>
-              <Card onClick={filteredProductsByCategory}>滑鼠類</Card>
-              <Card onClick={filteredProductsByCategory}>耳機類</Card>
-              <Card onClick={filteredProductsByCategory}>鍵盤類</Card>
+              <Card>全部商品</Card>
+              <Card>滑鼠類</Card>
+              <Card>耳機類</Card>
+              <Card>遊戲類</Card>
             </div>
           </Col>
-          {isPending ? (
-            <Loader loaderType2></Loader>
-          ) : (
-            <Col as='section' lg={10}>
-              <select
-                className='form-select'
-                style={{ marginTop: '10px' }}
-                onChange={(e) => {
-                  history.push(`${path}?sort_by=${e.target.value}`);
-                }}
-              >
-                {/* 讓價格不要進入選單選項內 */}
-                <option value='價格' hidden>
-                  價格
-                </option>
-                <option value='price-ascending'>價格: 低到高</option>
-                <option value='price-descending'>價格: 高到低</option>
-              </select>
-              {keyword === '滑鼠類' ||
-              keyword === '耳機類' ||
-              keyword === '鍵盤類' ||
-              path === '/' ||
-              path.substring(0, 6) === '/page/' ? (
-                <h1 className='text-center mt-2'>{category}</h1>
-              ) : (
-                <h1 className='text-center mt-2'>查詢結果</h1>
-              )}
-              {/* <h1 className='text-center mt-2'>{category}</h1> */}
-              <Row>
-                {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
-                {products.map((product) => (
-                  <Col key={product._id} sm={12} md={6} lg={4}>
-                    <Product product={product} />
-                  </Col>
-                ))}
-              </Row>
-              <Paginate pages={pages} page={page} sortBy={sortBy} />
-            </Col>
-          )}
+          <Col as='section' lg={10}>
+            <select
+              className='form-select'
+              style={{ marginTop: '10px' }}
+              onChange={(e) => {
+                history.push(`${path}?sort_by=${e.target.value}`);
+              }}
+            >
+              {/* 讓價格不要進入選單選項內 */}
+              <option value='價格' hidden>
+                價格
+              </option>
+              <option value='price-ascending'>價格: 低到高</option>
+              <option value='price-descending'>價格: 高到低</option>
+            </select>
+            {isPending ? (
+              <Loader loaderType2></Loader>
+            ) : (
+              <>
+                {keyword === '全部商品' ||
+                keyword === '滑鼠類' ||
+                keyword === '耳機類' ||
+                keyword === '遊戲類' ||
+                path === '/' ||
+                path.substring(0, 6) === '/page/' ? (
+                  <h1 className='text-center mt-2'>{category}</h1>
+                ) : (
+                  <h1 className='text-center mt-2'>查詢結果</h1>
+                )}
+                {/* <h1 className='text-center mt-2'>{category}</h1> */}
+                <Row>
+                  {/* 從小裝置到大裝置 Col 這塊div的個數 >> 12/12=1  6/12=2  4/12=3 */}
+                  {products.map((product) => (
+                    <Col key={product._id} sm={12} md={6} lg={4}>
+                      <Product product={product} />
+                    </Col>
+                  ))}
+                </Row>
+                <Paginate pages={pages} page={page} sortBy={sortBy} />
+              </>
+            )}
+          </Col>
         </>
       )}
     </Row>

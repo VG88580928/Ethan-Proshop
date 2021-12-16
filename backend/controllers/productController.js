@@ -22,24 +22,25 @@ const getProducts = asyncHandler(async (req, res) => {
 
   // &or 滿足任一就回傳
   // 來源: https://docs.mongodb.com/manual/reference/operator/query/or/#op._S_or
-  const keyword = req.query.keyword
-    ? {
-        $or: [
-          {
-            name: {
-              $regex: req.query.keyword,
-              $options: 'i',
+  const keyword =
+    req.query.keyword && req.query.keyword !== '全部商品'
+      ? {
+          $or: [
+            {
+              name: {
+                $regex: req.query.keyword,
+                $options: 'i',
+              },
             },
-          },
-          {
-            category: {
-              $regex: req.query.keyword,
-              $options: 'i',
+            {
+              category: {
+                $regex: req.query.keyword,
+                $options: 'i',
+              },
             },
-          },
-        ],
-      }
-    : {};
+          ],
+        }
+      : {};
 
   // 寫法參考: https://stackoverflow.com/questions/4299991/how-to-sort-in-mongoose
   const sortProducts =
