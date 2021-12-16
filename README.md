@@ -2,7 +2,7 @@
 > 這是一個使用 MongoDB、Express、React、Node(MERN) 架設，並部署在 Heroku 的購物網站。
 * 此購物網站用戶分成 **一般用戶** & **管理員** 兩種，以管理員身分登入可以進入後台管理所有 **用戶**、**商品**、**訂單** 等等內容。
 
-![首頁](https://i.imgur.com/qy3fqqc.png)
+![首頁](https://i.imgur.com/3SvnIRq.png)
 
 ## 功能
 * 響應式(RWD)網站設計
@@ -40,6 +40,8 @@
     - Heroku (使用 Kaffeine 定時戳網站防止 idling)
 
 ## 購物流程展示
+> 展示商品為舊版內容，目前網站商品已更新過
+
 * 以直接搜尋商品做為範例
 
 在搜尋欄輸入商品字首
@@ -148,7 +150,7 @@
 
 ![商品列表頁面](https://i.imgur.com/XPiTMl1.png)
 
-![編輯商品頁面](https://i.imgur.com/QRnZEgh.png)
+![編輯商品頁面](https://i.imgur.com/ILekRGw.png)
 
 訂單列表頁面
 
@@ -166,6 +168,7 @@
 
 ## :art: Sources | 商品圖片來源
 
+- [Unsplash](https://unsplash.com/)
 - [羅技官網](https://www.logitech.com/zh-tw)
 - [FiiO官網](https://www.fiio.com.tw/)
 
