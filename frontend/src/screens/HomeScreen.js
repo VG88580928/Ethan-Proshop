@@ -22,7 +22,7 @@ const HomeScreen = ({ history, match, location }) => {
 
   const pageNumber = match.params.pageNumber || 1;
 
-  const sortBy = location.search ? location.search.split('=')[1] : '';
+  const sortBy = location.search ? location.search.split('=')[1] : ''; // location.search 取得 url query 部分(包括 ?)
 
   const divRef = useRef();
 
@@ -64,6 +64,13 @@ const HomeScreen = ({ history, match, location }) => {
     changeValue(e);
   };
 
+  const getFilterUrl = (filter) => {
+    // 這樣寫未來比較方便加更多功能
+    const sortOrder = filter.order;
+
+    return `${path}?sort_by=${sortOrder}`;
+  };
+
   return (
     <Row className='home-screen pt-5'>
       <Meta title='倫倫の商城 | 首頁' />
@@ -96,7 +103,7 @@ const HomeScreen = ({ history, match, location }) => {
               className='form-select'
               style={{ marginTop: '10px' }}
               onChange={(e) => {
-                history.push(`${path}?sort_by=${e.target.value}`);
+                history.push(getFilterUrl({ order: e.target.value }));
               }}
             >
               {/* 讓價格不要進入選單選項內 */}
