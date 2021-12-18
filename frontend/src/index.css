@@ -193,6 +193,34 @@ footer {
   color: #fff;
   font-size: 16px;
   letter-spacing: 5px;
+  z-index: 5;
+}
+
+.home-screen .product__mask__relative {
+  position: relative;
+}
+
+.home-screen .mask {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: hsla(0, 0%, 39.6%, 0.6);
+  color: #fff;
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+}
+
+.home-screen .mask:hover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: hsla(0, 0%, 39.6%, 0.6);
+  color: #fff;
+  opacity: 1;
 }
 
 /* ProductScreen */

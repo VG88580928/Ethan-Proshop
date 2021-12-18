@@ -15,9 +15,15 @@ const Product = ({ product }) => {
       }
       style={{ minHeight: '430px' }}
     >
-      <NavLink to={`/product/${product._id}`}>
-        {/* 因為原本是a標籤會有換頁行為，把a標籤換成NavLink後，換頁就不會刷新頁面了 */}
+      <NavLink
+        className='product__mask__relative'
+        to={`/product/${product._id}`}
+      >
+        {/* 因為原本是 a 標籤會有換頁行為，把 a 標籤換成 NavLink 後，換頁就不會刷新頁面了 */}
         <Card.Img src={product.image} variant='top' />
+        <div className='mask d-flex justify-content-center align-items-center'>
+          <h2>查看更多</h2>
+        </div>
       </NavLink>
       <Card.Body>
         <NavLink to={`/product/${product._id}`}>

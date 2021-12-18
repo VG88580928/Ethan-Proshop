@@ -44,10 +44,6 @@ const HomeScreen = ({ history, match, location }) => {
   }, [dispatch, keyword, pageNumber, sortBy, path]);
 
   const changeValue = (e) => {
-    /* 這邊多檢查了 e.target.className === 'card' 是因為發現原本點到商品種類的間格區塊，
-     會直接把所有 value 印到畫面上(變這樣 =>'全部商品滑鼠類耳機類遊戲類') */
-    // 這邊利用了 Event Delegation 的技巧，所以只需要在 div 上註冊一次點擊事件
-    // if (e.target.tagName === 'DIV' && e.target.className === 'card active')
     dispatch(productCategoryChange(e.target.textContent));
   };
 
@@ -88,6 +84,9 @@ const HomeScreen = ({ history, match, location }) => {
             <div
               ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
               onClick={(e) => {
+                /*這邊利用了 Event Delegation 的技巧，所以只需要在 div 上註冊一次點擊事件。
+                  多檢查了 e.target.className.includes('card') 是因為發現原本點到商品種類之間的縫隙
+                  會直接把所有 value 印到畫面上(變這樣 =>'全部商品滑鼠類耳機類遊戲類') */
                 if (e.target.className.includes('card'))
                   filteredProductsByCategory(e);
               }}

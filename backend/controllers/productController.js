@@ -56,7 +56,7 @@ const getProducts = asyncHandler(async (req, res) => {
 
   // 假設今天我搜尋 a，搜尋到 10 個符合的 document(Product.find({ ...keyword }) 找到 10 個商品，上面的 count = 10)，而我今天在商品第三頁(page = 3)，假設 pageSize = 2，我會希望我只在畫面上看到 2 個商品 (limit(2) => 限制最多只回傳 2 個 document)，
   // 而這兩個商品我希望看到 10 個符合商品裡的 '第 5 個 & 第 6 個' 商品，所以我應該跳過前 4 個商品(skip(pageSize * (page -1) = skip(4))，因此最後回傳 '第 5 個 & 第 6 個' 商品'。
-  const products = await Product.find({ ...keyword }) // db.collection.find method returns a cursor 注意不能寫 await，會出錯(因為變成回傳商品 Array，之後執行 limit() 就會報錯了)
+  const products = await Product.find({ ...keyword }) // db.collection.find method returns a cursor 注意不能先 await Product.find() 拿完商品後才 products.sort().limit()...，會出錯(因為回傳商品 Array 就無法使用 .sort().limit() 等方法了，會直接報錯)
     .sort(sortProducts)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
