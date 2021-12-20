@@ -8,11 +8,9 @@ const Product = ({ product }) => {
     // 加入minHeight讓商品卡片等高，庫存為 0 時顯示已售完圖示
     // 把 sellout::before 放在 div 而不是 image 上是因為 ::before 無法用在 image 上 (來源: https://stackoverflow.com/questions/5843035/does-before-not-work-on-img-elements/5843164#5843164)
     <Card
-      className={
-        product.countInStock === 0
-          ? 'my-3 p-3 rounded sellout'
-          : 'my-3 p-3 rounded'
-      }
+      className={`my-3 p-3 rounded ${
+        product.countInStock === 0 ? 'sellout' : ''
+      }`}
       style={{ minHeight: '430px' }}
     >
       <NavLink
