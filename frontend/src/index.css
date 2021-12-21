@@ -394,6 +394,7 @@ footer {
 @media (max-width: 500px) {
   .carousel-caption h2 {
     /* RWD font-size */
-    font-size: 5vw;
+    /* 文字盡量用 vmin(當前 vw 和 vh 中較小的值)，如果從網頁到手機版都用 vw 或 vh 的話橫屏和豎屏狀態顯示會不一致 */
+    font-size: 5vmin;
   }
 }
