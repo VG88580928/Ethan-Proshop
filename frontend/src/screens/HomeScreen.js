@@ -47,16 +47,9 @@ const HomeScreen = ({ history, match, location }) => {
     dispatch(productCategoryChange(e.target.textContent));
   };
 
-  const active = (e) => {
-    const divs = divRef.current.querySelectorAll('.card'); // 不要寫成 document.querySelectorAll('.category .card')，你抓了 document 會抓到其他 components，可能導致非預期的 bugs(參考:https://stackoverflow.com/questions/57556673/react-ref-and-query-selector-all)
-    divs.forEach((div) => div.classList.remove('active'));
-    e.target.classList.add('active');
-  };
-
   const filteredProductsByCategory = (e) => {
     const category = e.target.textContent;
     history.push(`/search/${category}`);
-    active(e);
     changeValue(e);
   };
 
@@ -91,10 +84,12 @@ const HomeScreen = ({ history, match, location }) => {
                   filteredProductsByCategory(e);
               }}
             >
-              <Card>全部商品</Card>
-              <Card>滑鼠類</Card>
-              <Card>耳機類</Card>
-              <Card>遊戲類</Card>
+              <Card className={category === '全部商品' && 'active'}>
+                全部商品
+              </Card>
+              <Card className={category === '滑鼠類' && 'active'}>滑鼠類</Card>
+              <Card className={category === '耳機類' && 'active'}>耳機類</Card>
+              <Card className={category === '遊戲類' && 'active'}>遊戲類</Card>
             </div>
           </Col>
           <Col as='section' lg={10}>
