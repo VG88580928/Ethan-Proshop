@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'; // 優化過去 connect 的寫法
 import { Col, Row, Card } from 'react-bootstrap';
 import Product from '../components/Product';
@@ -14,8 +14,6 @@ import {
 } from '../redux/slices/productSlice';
 
 const HomeScreen = ({ history, match, location }) => {
-  // const [value, setValue] = useState('所有商品');
-
   const path = location.pathname; // 取得 url 的 pathname 部分 (不包括 query 部分)
 
   const keyword = match.params.keyword;
@@ -23,8 +21,6 @@ const HomeScreen = ({ history, match, location }) => {
   const pageNumber = match.params.pageNumber || 1;
 
   const sortBy = location.search ? location.search.split('=')[1] : ''; // location.search 取得 url query 部分(包括 ?)
-
-  const divRef = useRef();
 
   const dispatch = useDispatch();
 
@@ -75,7 +71,6 @@ const HomeScreen = ({ history, match, location }) => {
           {!keyword && !sortBy && <ProductCarousel />}
           <Col className='category' as='section' lg={2}>
             <div
-              ref={divRef} // 這裡 divRef 其實等同 (el) => (divRef.current = el) (react 提供的的簡寫語法)
               onClick={(e) => {
                 /*這邊利用了 Event Delegation 的技巧，所以只需要在 div 上註冊一次點擊事件。
                   多檢查了 e.target.className.includes('card') 是因為發現原本點到商品種類之間的縫隙
