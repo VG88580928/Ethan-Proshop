@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
@@ -13,6 +13,19 @@ const Header = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const headerRef = useRef();
+
+  let lastScrollY = 30; // 設大於 0 的原因是因為發現重新整理時 window.scrollY 沒有完全等於 0(https://stackoverflow.com/questions/11486527/reload-browser-does-not-reset-page-to-top)，等於 0 會導致剛進畫面 header 就 hidden 了
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > lastScrollY) {
+      headerRef.current.classList.add('hidden');
+    } else {
+      headerRef.current.classList.remove('hidden');
+    }
+    lastScrollY = window.scrollY;
+  });
+
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('shippingAddress');
@@ -24,7 +37,8 @@ const Header = () => {
   };
 
   return (
-    <header className='fixed-top'>
+    // 這裡 headerRef 其實等同 (el) => (headerRef.current = el) (react 提供的的簡寫語法)
+    <header className='fixed-top' ref={headerRef}>
       <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           {/* https://stackoverflow.com/questions/35687353/react-bootstrap-link-item-in-a-navitem 此寫法參考二樓解答 */}
