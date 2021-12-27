@@ -79,12 +79,7 @@ const UserListScreen = ({ history }) => {
                 </td>
                 <td>
                   <Button
-                    className={
-                      // 因為這個 Button 變成 NavLink，所以只好自己寫它 disabled 後的樣式
-                      userInfo._id === user._id
-                        ? 'userlist-edit-disabled me-2'
-                        : 'me-2'
-                    }
+                    className='me-2'
                     variant='dark'
                     as={NavLink}
                     to={`/admin/user/${user._id}/edit`}

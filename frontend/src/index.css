@@ -20,7 +20,7 @@ body {
 }
 
 main {
-  min-height: 88vh;
+  min-height: 90vh;
 }
 
 h1 {
@@ -46,9 +46,15 @@ a:hover {
   color: #18191a;
 }
 
-.userlist-edit-disabled {
-  pointer-events: none;
+/* 如果想讓該 link 同時有 cursor 且 pointer-events: none，可參考: https://stackoverflow.com/a/57221281 */
+a[aria-disabled='true'] {
+  cursor: not-allowed;
   opacity: 0.65;
+}
+
+.btn:disabled {
+  pointer-events: auto;
+  cursor: not-allowed;
 }
 
 /* 這邊為了消掉 html datalist hover 時默認的箭頭 */
@@ -62,6 +68,11 @@ header.fixed-top {
   right: 0;
   left: 0;
   z-index: 10;
+  transition: top 0.2s ease-in-out;
+}
+
+header.hidden {
+  top: -60px;
 }
 
 header .navbar-nav {
@@ -131,26 +142,20 @@ footer {
   margin: 10px 0;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 
 .category .card:hover {
-  /* border: 0.5px solid #696867; */
   box-shadow: 0 1px 5px #757473;
 }
 
 .category .active {
-  /* border: 0.5px solid #696867; */
+  border: 0.5px solid #70706e;
   box-shadow: 0 1px 5px #757473;
 }
 
-/* .category .card:active {
-  border: 0.5px solid #696867;
-  box-shadow: 0 2px 10px #757473;
-} */
-
 .category > div {
-  position: sticky; /* 意思就是原本是 position:relative，當距離螢幕上緣 20px 後轉為 fixed */
+  position: sticky; /* 意思就是原本是 position:relative，當距離螢幕上緣 70px 後轉為 fixed */
   top: 70px;
 }
 
