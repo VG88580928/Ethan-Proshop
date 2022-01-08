@@ -52,7 +52,7 @@
 
 ![查詢結果](https://i.imgur.com/grClJ16.png)
 
-點擊目標商品進入商品頁面，可直接輸入商品個數
+點擊目標商品進入商品頁面，可直接輸入商品個數，然後點擊**加入購物車**
 
 ![商品頁面](https://i.imgur.com/chlHLYP.png)
 
@@ -60,11 +60,11 @@
 
 ![網名](https://i.imgur.com/cu1wHAe.png)
 
-點擊**加入購物車**後進入購物車頁面
+進入購物車頁面，點擊**去買單**後會導至登入頁面
 
 ![購物車頁面](https://i.imgur.com/dREyJRE.png)
 
-點擊**去買單**後導至登入頁面
+登入頁面
 
 ![登入頁面](https://i.imgur.com/Bc3gdSy.png)
 
