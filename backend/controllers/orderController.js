@@ -1,15 +1,3 @@
-// to improve the security level of order creation in the backend we can have this code :
-
-// for(let i=0; i < order.orderItems.length; i++) {
-
-//   const product = await Product.findById(order.orderItems[i].product);
-
-//   order.orderItems[i].price = product.price
-
-// }
-
-// after this line:
-
 // https://github.com/bradtraversy/proshop_mern/blob/master/backend/controllers/orderController.js#L23
 import asyncHandler from 'express-async-handler'; //讓我們不用一直重複寫 try-catch (Express 5.0 alpha 版本不需要) 原理:https://stackoverflow.com/questions/67404243/how-does-this-asynchandler-function-work(回答二樓)
 import Product from '../models/productModel.js';
