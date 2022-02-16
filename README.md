@@ -1,6 +1,6 @@
 # Ethan-Proshop
 > 這是一個使用 MongoDB、Express、React、Node(MERN) 架設，並部署在 Heroku 的購物網站。  
-網站網址: https://ethan-proshop.herokuapp.com/
+網站網址 : <https://ethan-proshop.herokuapp.com/>
 * 此購物網站用戶分成 **一般用戶** & **管理員** 兩種，以管理員身分登入可以進入後台管理所有 **用戶**、**商品**、**訂單** 等等內容。
 
 ![首頁](https://i.imgur.com/3SvnIRq.png)
