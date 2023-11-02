@@ -165,7 +165,6 @@
 
 ![訂單頁面](https://i.imgur.com/ra5ZHHa.png)
 
-其餘更多細節部分，歡迎至 Demo 網站觀看：<https://ethan-proshop.herokuapp.com/>
 
 ## :art: Sources | 商品圖片來源
 
